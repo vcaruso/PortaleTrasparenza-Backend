@@ -1,0 +1,5 @@
+include:
+  - project: "library/public/templates/pipelines"
+    file: "/gitlab-ci/stages/build/build-dotnet.yml"
+    ref: $PIPELINE_GIT_TAG
+

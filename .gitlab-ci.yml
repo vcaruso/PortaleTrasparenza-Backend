@@ -1,0 +1,10 @@
+include:
+  - project: "library/public/templates/pipelines"
+    file: "/gitlab-ci/pipelines/gitops-application.yml"
+    ref: $PIPELINE_GIT_TAG
+  - local: ".gitlab-ci-local.yml"
+default:
+  before_script:
+    - echo "Execute this `before_script` in all jobs by default."
+  after_script:
+    - echo "Check Variable on end pipeline"

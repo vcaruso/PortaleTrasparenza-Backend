@@ -1,0 +1,6 @@
+@ENINET.TransparentPortal.API_HostAddress = http://localhost:5071
+
+GET {{ENINET.TransparentPortal.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
