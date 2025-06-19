@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ci-cd", "ci-cd", "{55754F39
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ENINET.TransparentPortal.Repository", "ENINET.TransparentPortal.Repository\ENINET.TransparentPortal.Repository.csproj", "{91F2633A-08F5-4620-A8BD-5DF6FF93D343}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ENINET.TransaprentPortal.Persistence", "ENINET.TransaprentPortal.Persistence\ENINET.TransaprentPortal.Persistence.csproj", "{7B862D0A-0143-4BAC-9D47-6875474CE7C9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ENINET.TransparentPortal.Persistence", "ENINET.TransaprentPortal.Persistence\ENINET.TransparentPortal.Persistence.csproj", "{7B862D0A-0143-4BAC-9D47-6875474CE7C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

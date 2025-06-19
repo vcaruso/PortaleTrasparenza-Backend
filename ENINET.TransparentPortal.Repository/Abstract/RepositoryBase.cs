@@ -2,7 +2,6 @@
 using ENINET.TransparentPortal.Repository.Contract;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-
 namespace ENINET.TransparentPortal.Repository.Abstract
 {
     public class RepositoryBase<T> : IRepositoryBase<T> where T : class

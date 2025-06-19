@@ -6,6 +6,8 @@ using ENINET.TransparentPortal.API.Dtos.App;
 using ENINET.TransparentPortal.API.Services.Storage;
 using ENINET.TransparentPortal.API.Utility;
 using ENINET.TransparentPortal.Repository.Contract;
+using ENINET.TransparentPortal.Repository.Extension;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,38 +32,50 @@ public class AppController : ControllerBase
         _configuration.Bind("Storage", _storageSettings);
     }
 
-    [HttpGet("reports/{element}/{year}")]
-    public async Task<ApiResult<IList<ReportDto>>> GetReport(string element, string year)
+    [HttpGet("reports/{element}/{year}/{pageNum}/{pageSize}")]
+    public async Task<ApiResult<IList<ReportDto>>> GetReport(string element, string year, int pageNum = 1, int pageSize = 15)
     {
         var email = User.Claims.Where(t => t.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").FirstOrDefault();
         var authorizedSites = User.Claims.Where(t => t.Type == "TransparentSites").FirstOrDefault();
         var result = new List<Report>();
+        int totalItems = 0;
+
         if (authorizedSites != null && !String.IsNullOrEmpty(authorizedSites.Value))
         {
             if (element != "*")
             {
+                totalItems = await _repository.Report.FindByCondition(null, x => x.Acronym == authorizedSites.Value && x.ElementName == element && x.Year == year, false)
+                    .OrderBy($"Element,Year,-Month,-Progressive")
+                    .CountAsync();
+
                 result = await _repository.Report.FindByCondition(null, x => x.Acronym == authorizedSites.Value && x.ElementName == element && x.Year == year, false)
-                    .OrderBy(o => o.Element)
-                    .ThenBy(o => o.Year)
-                    .ThenBy(o => o.Month)
-                    .ThenBy(o => o.Progressive)
+
+                    .OrderBy($"Element,Year,-Month,-Progressive")
+
+                    .Skip((pageNum - 1) * pageSize)
+                    .Take(pageSize)
                     .ToListAsync();
             }
             else
             {
+                totalItems = await _repository.Report.FindByCondition(null, x => x.Acronym == authorizedSites.Value && x.Year == year, false)
+                    .OrderBy($"Element,Year-,Month,-Progressive")
+                    .CountAsync();
+
                 result = await _repository.Report.FindByCondition(null, x => x.Acronym == authorizedSites.Value && x.Year == year, false)
-                    .OrderBy(o => o.Element)
-                    .ThenBy(o => o.Year)
-                    .ThenBy(o => o.Month)
-                    .ThenBy(o => o.Progressive)
+                    .OrderBy($"Element,Year,-Month,-Progressive")
+
+                    .Skip((pageNum - 1) * pageSize)
+                    .Take(pageSize)
                     .ToListAsync();
             }
-
+            var numPages = (totalItems / pageSize) + (totalItems % pageSize != 0 ? 1 : 0);
             return new ApiResult<IList<ReportDto>>
             {
                 Data = _mapper.Map<List<ReportDto>>(result),
                 Message = "Ok",
-                StatusCode = StatusCodes.Status200OK
+                StatusCode = StatusCodes.Status200OK,
+                PageInfo = new PagedInfo(totalItems, (int)numPages, pageSize, pageNum)
             };
 
         }
@@ -72,6 +86,7 @@ public class AppController : ControllerBase
 
     [HttpPost("uploadsingle")]
     [Consumes("multipart/form-data")]
+    [Authorize(Roles = "UPLOAD_REPORT")]
     public async Task<ApiResult<UploadResultDto>> UploadSingle([FromForm] AddReportDto formData)
     {
         if (formData.file.Length > 0 && formData.month > 0 && formData.year > 0 && !String.IsNullOrEmpty(formData.element) && formData.progressive > 0)
@@ -119,6 +134,7 @@ public class AppController : ControllerBase
     }
 
     [HttpPost("uploadanalisi")]
+    [Authorize(Roles = "UPLOAD_REPORT")]
     public async Task<ApiResult<IList<UploadResultDto>>> UploadAnalisi(List<IFormFile> files)
     {
         if (files.Count > 0)
@@ -171,6 +187,7 @@ public class AppController : ControllerBase
     }
 
     [HttpGet("download/{filename}")]
+    [Authorize(Roles = "DOWNLOAD_REPORT")]
     public async Task<ApiResult<FilePayloadDto>> Download(string fileName)
     {
         var payload = await _storageManager.Download(_storageSettings.Root, fileName);
@@ -178,6 +195,7 @@ public class AppController : ControllerBase
     }
 
     [HttpDelete("delete/{filename}")]
+    [Authorize(Roles = "DELETE_REPORT")]
     public async Task<ApiResult<CommandResultDto>> Delete(string fileName)
     {
         var exist = await _repository.Report.FindByCondition(null, f => f.FileName == fileName, true).FirstOrDefaultAsync();

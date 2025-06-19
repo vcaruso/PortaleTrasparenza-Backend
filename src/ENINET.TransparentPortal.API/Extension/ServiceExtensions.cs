@@ -1,4 +1,3 @@
-using ENINET.TransaprentPortal.Persistence.Configuration;
 using ENINET.TransparentPortal.API.Services.AuthService;
 using ENINET.TransparentPortal.Repository;
 using ENINET.TransparentPortal.Repository.Contract;
@@ -43,9 +42,16 @@ public static class ServiceExtensions
                                     {
                                         newClaims = newClaims.Append(new Claim(ClaimTypes.Role, group));
 
+
                                     }
 
                                 }
+                                // Permessi
+                                foreach (var perm in auth.GetUserPermission(userid.First().Value))
+                                {
+                                    newClaims = newClaims.Append(new Claim(ClaimTypes.Role, perm));
+                                }
+                                // Siti Autorizzati
                                 if (authorizedSites.Length > 0)
                                 {
                                     foreach (var site in authorizedSites)
@@ -78,7 +84,7 @@ public static class ServiceExtensions
                 policyBuilder.Requirements.Add(new ScopeAuthorizationRequirement() { RequiredScopesConfigurationKey = $"AzureAd:Scopes" }));
 
             //config.AddPolicy("LabvantageViewer", policyBuilder => policyBuilder.RequireClaim(ClaimTypes.Role, new string[] { ApplicationPermissionConfiguration.LabvantgeViewer, ApplicationPermissionConfiguration.LabvantageBullettin }));
-
+            /*
             var groupPermission = new Dictionary<string, string[]>
             {
                 // Administrators
@@ -86,11 +92,12 @@ public static class ServiceExtensions
                     ApplicationGroupConfiguration.Administrators,new string[]{
                             ApplicationPermissionConfiguration.AddUser,
                             ApplicationPermissionConfiguration.DeleteUser,
-                            ApplicationPermissionConfiguration.ApplicationUsersManage
+                            ApplicationPermissionConfiguration.ApplicationUsersManage,
+
                 }},
-                // Users
+                // Contributors
                 {
-                    ApplicationGroupConfiguration.Users, new string[] {
+                    ApplicationGroupConfiguration.Contributors, new string[] {
 
                     }
                 }
@@ -103,7 +110,7 @@ public static class ServiceExtensions
             {
                 config.AddPolicy(group.Key, policyBuilder => policyBuilder.RequireClaim(ClaimTypes.Role, group.Value));
             }
-
+            */
 
 
 
