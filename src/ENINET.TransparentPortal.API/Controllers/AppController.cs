@@ -32,8 +32,8 @@ public class AppController : ControllerBase
         _configuration.Bind("Storage", _storageSettings);
     }
 
-    [HttpGet("reports/{element}/{year}/{pageNum}/{pageSize}")]
-    public async Task<ApiResult<IList<ReportDto>>> GetReport(string element, string year, int pageNum = 1, int pageSize = 15)
+    [HttpGet("reports/{element}/{year}/{pageNum}/{pageSize}/{orderby?}")]
+    public async Task<ApiResult<IList<ReportDto>>> GetReport(string element, string year, int pageNum = 1, int pageSize = 15, string orderby = $"Element,Year,-Month,-Progressive")
     {
         var email = User.Claims.Where(t => t.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").FirstOrDefault();
         var authorizedSites = User.Claims.Where(t => t.Type == "TransparentSites").FirstOrDefault();
@@ -45,12 +45,12 @@ public class AppController : ControllerBase
             if (element != "*")
             {
                 totalItems = await _repository.Report.FindByCondition(null, x => x.Acronym == authorizedSites.Value && x.ElementName == element && x.Year == year, false)
-                    .OrderBy($"Element,Year,-Month,-Progressive")
+                    .OrderBy(orderby)
                     .CountAsync();
 
                 result = await _repository.Report.FindByCondition(null, x => x.Acronym == authorizedSites.Value && x.ElementName == element && x.Year == year, false)
 
-                    .OrderBy($"Element,Year,-Month,-Progressive")
+                    .OrderBy(orderby)
 
                     .Skip((pageNum - 1) * pageSize)
                     .Take(pageSize)
@@ -59,11 +59,11 @@ public class AppController : ControllerBase
             else
             {
                 totalItems = await _repository.Report.FindByCondition(null, x => x.Acronym == authorizedSites.Value && x.Year == year, false)
-                    .OrderBy($"Element,Year-,Month,-Progressive")
+                    .OrderBy(orderby)
                     .CountAsync();
 
                 result = await _repository.Report.FindByCondition(null, x => x.Acronym == authorizedSites.Value && x.Year == year, false)
-                    .OrderBy($"Element,Year,-Month,-Progressive")
+                    .OrderBy(orderby)
 
                     .Skip((pageNum - 1) * pageSize)
                     .Take(pageSize)
