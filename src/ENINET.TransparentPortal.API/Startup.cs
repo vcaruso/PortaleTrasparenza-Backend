@@ -25,12 +25,13 @@ namespace ENINET.TransparentPortal.API
             services.Configure<PostgresSettings>(_configuration.GetSection("Postgres"));
             services.Configure<CorsSettings>(_configuration.GetSection("CORS"));
             services.Configure<StorageSettings>(_configuration.GetSection("Storage"));
+            services.Configure<AzureBlobSettings>(_configuration.GetSection("AzureBlob"));
             // Preleviamo la password per la stringa di connessione dalla variabile di ambiente
             var cnstring = _configuration.GetConnectionString("DefaultConnection")!;
             cnstring = cnstring.Replace("$PASSWORD", System.Environment.GetEnvironmentVariable("POSTGRES_DB_PASSWORD"));
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(cnstring));
             services.ConfigureRepositoryManager();
-            services.AddScoped<IStorageManager, LocalStorageManager>();
+            services.AddScoped<IStorageManager, AzureStorageManager>();
             services.AddScoped<IAuthService, AuthService>();
             //Aggiungiamo le impostazioni per autorizzare l'autorizzazione AD di Azure
             services.ConfigureAzureADAuthorization(_configuration);
