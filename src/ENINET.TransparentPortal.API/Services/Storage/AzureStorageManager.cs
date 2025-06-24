@@ -16,7 +16,7 @@ namespace ENINET.TransparentPortal.API.Services.Storage
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _configuration.Bind("AzureBlob", _azureStorageSettings);
-            var pwd_service_principal = System.Environment.GetEnvironmentVariable("AZURE_BLOB_SERVICE_PRINCIPAL_PASSWORD");
+
             _azureStorageSettings.Client_Secret = System.Environment.GetEnvironmentVariable("AZURE_BLOB_SERVICE_PRINCIPAL_PASSWORD") ?? "";
         }
 
