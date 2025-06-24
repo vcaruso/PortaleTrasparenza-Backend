@@ -16,7 +16,8 @@ namespace ENINET.TransparentPortal.API.Services.Storage
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _configuration.Bind("AzureBlob", _azureStorageSettings);
-
+            var pwd_service_principal = System.Environment.GetEnvironmentVariable("AZURE_BLOB_SERVICE_PRINCIPAL_PASSWORD");
+            _azureStorageSettings.Client_Secret = System.Environment.GetEnvironmentVariable("AZURE_BLOB_SERVICE_PRINCIPAL_PASSWORD") ?? "";
         }
 
         public async Task<bool> DeleteFile(string path, string fileName)
@@ -37,14 +38,18 @@ namespace ENINET.TransparentPortal.API.Services.Storage
             var segmenti = Utility.ReportUtility.SplitFileNameToPath(fileName);
             var percorso = Path.Combine(Path.Combine(Path.Combine(Path.Combine(Path.Combine("sites", segmenti.Site), segmenti.Area), segmenti.Year), segmenti.Month), fileName);
             var blobClient = await GetBlobClientAsync(percorso);
-            using (var stream = new MemoryStream())
+            if (await blobClient.ExistsAsync())
             {
-                await blobClient.DownloadToAsync(stream);
-                byte[] buffer;
-                buffer = stream.ToArray();
-                return buffer;
+                using (var stream = new MemoryStream())
+                {
+                    await blobClient.DownloadToAsync(stream);
+                    byte[] buffer;
+                    buffer = stream.ToArray();
+                    return buffer;
 
+                }
             }
+            throw new FileNotFoundException();
 
 
         }

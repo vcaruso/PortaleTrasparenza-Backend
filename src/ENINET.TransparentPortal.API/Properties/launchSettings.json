@@ -6,7 +6,8 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "POSTGRES_DB_PASSWORD": "change_me"
+        "POSTGRES_DB_PASSWORD": "change_me",
+        "AZURE_BLOB_SERVICE_PRINCIPAL_PASSWORD": "arP8Q~I84BLJF9HUU6GNCA69FzpixeDAhQMqka~C"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5071"

@@ -29,6 +29,8 @@ namespace ENINET.TransparentPortal.API
             // Preleviamo la password per la stringa di connessione dalla variabile di ambiente
             var cnstring = _configuration.GetConnectionString("DefaultConnection")!;
             cnstring = cnstring.Replace("$PASSWORD", System.Environment.GetEnvironmentVariable("POSTGRES_DB_PASSWORD"));
+
+
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(cnstring));
             services.ConfigureRepositoryManager();
             services.AddScoped<IStorageManager, AzureStorageManager>();
