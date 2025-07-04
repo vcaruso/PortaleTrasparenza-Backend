@@ -1,5 +1,7 @@
 ﻿using ENINET.TransaprentPortal.Persistence.Configuration;
 using ENINET.TransaprentPortal.Persistence.Entities;
+using ENINET.TransparentPortal.Persistence.Configuration;
+using ENINET.TransparentPortal.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 using static ENINET.TransaprentPortal.Persistence.Configuration.ApplicationUserConfiuration;
 
@@ -18,6 +20,8 @@ namespace ENINET.TransaprentPortal.Persistence
             modelBuilder.Entity<GroupPermission>().HasKey(k => new { k.Permission, k.GroupName });
             modelBuilder.Entity<UserGroup>().HasKey(k => new { k.Userid, k.GroupName });
             modelBuilder.Entity<SitesUser>().HasKey(k => new { k.UserId, k.Acronym });
+            modelBuilder.Entity<ElementSite>().HasKey(k => new { k.ElementName, k.Acronym });
+
 
             modelBuilder.ApplyConfiguration(new SiteConfiguration());
             modelBuilder.ApplyConfiguration(new ApplicationGroupConfiguration());
@@ -27,6 +31,7 @@ namespace ENINET.TransaprentPortal.Persistence
             modelBuilder.ApplyConfiguration(new UserGroupConfiguration());
             modelBuilder.ApplyConfiguration(new SitesUserConfiguration());
             modelBuilder.ApplyConfiguration(new ElementConfiguration());
+            modelBuilder.ApplyConfiguration(new ElementSiteConfiguration());
         }
         public DbSet<Site> Sites { get; set; }
 
@@ -38,6 +43,8 @@ namespace ENINET.TransaprentPortal.Persistence
         public DbSet<UserGroup> UserGroups { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<Element> Elements { get; set; }
+
+        public DbSet<ElementSite> ElementsSite { get; set; }
 
     }
 }

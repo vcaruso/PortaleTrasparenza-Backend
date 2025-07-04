@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace ENINET.TransaprentPortal.Persistence.Migrations
+namespace ENINET.TransparentPortal.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -47,6 +47,17 @@ namespace ENINET.TransaprentPortal.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ApplicationUsers", x => x.UserId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Elements",
+                columns: table => new
+                {
+                    Name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Elements", x => x.Name);
                 });
 
             migrationBuilder.CreateTable(
@@ -110,17 +121,55 @@ namespace ENINET.TransaprentPortal.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Elements",
+                name: "ElementsSite",
                 columns: table => new
                 {
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Acronym = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false)
+                    ElementName = table.Column<string>(type: "text", nullable: false),
+                    Acronym = table.Column<string>(type: "text", nullable: false),
+                    MonthlyReport = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Elements", x => x.Name);
+                    table.PrimaryKey("PK_ElementsSite", x => new { x.ElementName, x.Acronym });
                     table.ForeignKey(
-                        name: "FK_Elements_Sites_Acronym",
+                        name: "FK_ElementsSite_Elements_ElementName",
+                        column: x => x.ElementName,
+                        principalTable: "Elements",
+                        principalColumn: "Name",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ElementsSite_Sites_Acronym",
+                        column: x => x.Acronym,
+                        principalTable: "Sites",
+                        principalColumn: "Acronym",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Reports",
+                columns: table => new
+                {
+                    FileName = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    ElementName = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
+                    Year = table.Column<string>(type: "character varying(4)", maxLength: 4, nullable: false),
+                    Month = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false),
+                    Progressive = table.Column<string>(type: "character varying(4)", maxLength: 4, nullable: false),
+                    Acronym = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    UploadDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UserUpload = table.Column<string>(type: "character varying(80)", maxLength: 80, nullable: false),
+                    FileLength = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reports", x => x.FileName);
+                    table.ForeignKey(
+                        name: "FK_Reports_Elements_ElementName",
+                        column: x => x.ElementName,
+                        principalTable: "Elements",
+                        principalColumn: "Name",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Reports_Sites_Acronym",
                         column: x => x.Acronym,
                         principalTable: "Sites",
                         principalColumn: "Acronym",
@@ -151,43 +200,14 @@ namespace ENINET.TransaprentPortal.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Reports",
-                columns: table => new
-                {
-                    FileName = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
-                    ElementName = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
-                    Year = table.Column<string>(type: "character varying(4)", maxLength: 4, nullable: false),
-                    Month = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false),
-                    Progressive = table.Column<string>(type: "character varying(4)", maxLength: 4, nullable: false),
-                    Acronym = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    UploadDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserUpload = table.Column<string>(type: "character varying(80)", maxLength: 80, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Reports", x => x.FileName);
-                    table.ForeignKey(
-                        name: "FK_Reports_Elements_ElementName",
-                        column: x => x.ElementName,
-                        principalTable: "Elements",
-                        principalColumn: "Name",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Reports_Sites_Acronym",
-                        column: x => x.Acronym,
-                        principalTable: "Sites",
-                        principalColumn: "Acronym",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.InsertData(
                 table: "ApplicationGroups",
                 columns: new[] { "GroupName", "GroupDescription" },
                 values: new object[,]
                 {
                     { "Administrators", "Administrators Group" },
-                    { "Users", "Users Group" }
+                    { "Contributors", "Users Group" },
+                    { "Viewers", "Viewers Group" }
                 });
 
             migrationBuilder.InsertData(
@@ -195,9 +215,21 @@ namespace ENINET.TransaprentPortal.Persistence.Migrations
                 columns: new[] { "Permission", "Description" },
                 values: new object[,]
                 {
+                    { "ADD_ELEMENTS", "Add Elements" },
+                    { "ADD_SITES", "Add Sites" },
                     { "ADD_USER", "Aggiunge un utente all'applicazione" },
                     { "APPLICATION_USERS_MANAGE", "Gestione utenti applicazione" },
-                    { "DELETE_USER", "Rimuove un utente all'applicazione" }
+                    { "DELETE_ELEMENTS", "Delete Elements" },
+                    { "DELETE_REPORT", "Delete Report" },
+                    { "DELETE_SITES", "Delete Sites" },
+                    { "DELETE_USER", "Rimuove un utente all'applicazione" },
+                    { "DOWNLOAD_REPORT", "Download Report" },
+                    { "UPDATE_ELEMENTS", "Update Elements" },
+                    { "UPDATE_SITES", "Update Sites" },
+                    { "UPLOAD_REPORT", "Upload Report" },
+                    { "VIEW_ELEMENTS", "View Elements" },
+                    { "VIEW_REPORT", "View Report" },
+                    { "VIEW_SITES", "View Sites" }
                 });
 
             migrationBuilder.InsertData(
@@ -206,17 +238,26 @@ namespace ENINET.TransaprentPortal.Persistence.Migrations
                 values: new object[] { "vincenzo.caruso@external.enilive.com", "vincenzo.caruso@external.enilive.com" });
 
             migrationBuilder.InsertData(
+                table: "Elements",
+                column: "Name",
+                values: new object[]
+                {
+                    "acqua",
+                    "aria"
+                });
+
+            migrationBuilder.InsertData(
                 table: "Sites",
                 columns: new[] { "Acronym", "Description" },
                 values: new object[] { "RO", "Sito di Rovigo" });
 
             migrationBuilder.InsertData(
-                table: "Elements",
-                columns: new[] { "Name", "Acronym" },
+                table: "ElementsSite",
+                columns: new[] { "Acronym", "ElementName", "MonthlyReport" },
                 values: new object[,]
                 {
-                    { "acqua", "RO" },
-                    { "aria", "RO" }
+                    { "RO", "acqua", 6 },
+                    { "RO", "aria", 4 }
                 });
 
             migrationBuilder.InsertData(
@@ -224,9 +265,36 @@ namespace ENINET.TransaprentPortal.Persistence.Migrations
                 columns: new[] { "GroupName", "Permission" },
                 values: new object[,]
                 {
+                    { "Administrators", "ADD_ELEMENTS" },
+                    { "Contributors", "ADD_ELEMENTS" },
+                    { "Administrators", "ADD_SITES" },
                     { "Administrators", "ADD_USER" },
                     { "Administrators", "APPLICATION_USERS_MANAGE" },
-                    { "Administrators", "DELETE_USER" }
+                    { "Administrators", "DELETE_ELEMENTS" },
+                    { "Contributors", "DELETE_ELEMENTS" },
+                    { "Administrators", "DELETE_REPORT" },
+                    { "Contributors", "DELETE_REPORT" },
+                    { "Viewers", "DELETE_REPORT" },
+                    { "Administrators", "DELETE_SITES" },
+                    { "Administrators", "DELETE_USER" },
+                    { "Administrators", "DOWNLOAD_REPORT" },
+                    { "Contributors", "DOWNLOAD_REPORT" },
+                    { "Viewers", "DOWNLOAD_REPORT" },
+                    { "Administrators", "UPDATE_ELEMENTS" },
+                    { "Contributors", "UPDATE_ELEMENTS" },
+                    { "Administrators", "UPDATE_SITES" },
+                    { "Administrators", "UPLOAD_REPORT" },
+                    { "Contributors", "UPLOAD_REPORT" },
+                    { "Viewers", "UPLOAD_REPORT" },
+                    { "Administrators", "VIEW_ELEMENTS" },
+                    { "Contributors", "VIEW_ELEMENTS" },
+                    { "Viewers", "VIEW_ELEMENTS" },
+                    { "Administrators", "VIEW_REPORT" },
+                    { "Contributors", "VIEW_REPORT" },
+                    { "Viewers", "VIEW_REPORT" },
+                    { "Administrators", "VIEW_SITES" },
+                    { "Contributors", "VIEW_SITES" },
+                    { "Viewers", "VIEW_SITES" }
                 });
 
             migrationBuilder.InsertData(
@@ -240,8 +308,8 @@ namespace ENINET.TransaprentPortal.Persistence.Migrations
                 values: new object[] { "Administrators", "vincenzo.caruso@external.enilive.com" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Elements_Acronym",
-                table: "Elements",
+                name: "IX_ElementsSite_Acronym",
+                table: "ElementsSite",
                 column: "Acronym");
 
             migrationBuilder.CreateIndex(
@@ -274,6 +342,9 @@ namespace ENINET.TransaprentPortal.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ElementsSite");
+
+            migrationBuilder.DropTable(
                 name: "GroupPermissions");
 
             migrationBuilder.DropTable(
@@ -292,13 +363,13 @@ namespace ENINET.TransaprentPortal.Persistence.Migrations
                 name: "Elements");
 
             migrationBuilder.DropTable(
+                name: "Sites");
+
+            migrationBuilder.DropTable(
                 name: "ApplicationGroups");
 
             migrationBuilder.DropTable(
                 name: "ApplicationUsers");
-
-            migrationBuilder.DropTable(
-                name: "Sites");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AnalisiHubApi.Dtos.App;
+using AutoMapper;
 using ENINET.TransaprentPortal.Persistence.Entities;
 using ENINET.TransparentPortal.API.Dtos.App;
 
@@ -11,6 +12,7 @@ public class TrasparentPortalProfile : Profile
 
         CreateMap<ReportDto, Report>().ReverseMap();
         CreateMap<ElementDto, Element>().ReverseMap();
+        CreateMap<SiteDto, Site>().ReverseMap();
 
     }
 }

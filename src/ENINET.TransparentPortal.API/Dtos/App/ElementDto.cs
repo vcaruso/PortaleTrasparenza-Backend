@@ -1,8 +1,4 @@
-﻿namespace ENINET.TransparentPortal.API.Dtos.App
-{
-    public class ElementDto
-    {
-        public string Name { get; set; } = default!;
-        public string Acronym { get; set; } = default!;
-    }
-}
+﻿namespace ENINET.TransparentPortal.API.Dtos.App;
+
+public record class ElementDto(string name, string acronym);
+

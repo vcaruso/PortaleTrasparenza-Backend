@@ -120,7 +120,7 @@ public class AppController : ControllerBase
                 }
                 else
                 {
-                    return new ApiResult<UploadResultDto> { Data = new UploadResultDto { Error = "Report già esistente. Non caricato.", Esito = false, FileName = fileName }, Message = "Ok", StatusCode = StatusCodes.Status200OK };
+                    throw new BadHttpRequestException($"Report {fileName} già esistente. Non caricato.");
 
                 }
 

@@ -64,7 +64,7 @@ public class AuthController : ControllerBase
                 permissions = permissions.Distinct().ToList();
                 return new ApiResult<UserAuthorizationDto>
                 {
-                    Data = new UserAuthorizationDto { Gruppi = groups.ToArray(), Permessi = permissions.ToArray(), Raffinerie = raffineries.ToArray(), Userid = email.Value },
+                    Data = new UserAuthorizationDto { Gruppi = groups.ToArray(), Permessi = permissions.ToArray(), Sites = raffineries.ToArray(), Userid = email.Value },
                     StatusCode = StatusCodes.Status200OK,
                     Message = "OK"
                 };

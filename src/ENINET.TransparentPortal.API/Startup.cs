@@ -33,7 +33,7 @@ namespace ENINET.TransparentPortal.API
 
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(cnstring));
             services.ConfigureRepositoryManager();
-            services.AddScoped<IStorageManager, AzureStorageManager>();
+            services.AddScoped<IStorageManager, LocalStorageManager>();
             services.AddScoped<IAuthService, AuthService>();
             //Aggiungiamo le impostazioni per autorizzare l'autorizzazione AD di Azure
             services.ConfigureAzureADAuthorization(_configuration);

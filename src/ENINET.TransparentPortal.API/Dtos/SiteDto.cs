@@ -2,7 +2,7 @@
 {
     public class SiteDto
     {
-        public string Acronimo { get; set; } = default!;
-        public string Raffineria { get; set; } = default!;
+        public string Acronym { get; set; } = default!;
+        public string Description { get; set; } = default!;
     }
 }

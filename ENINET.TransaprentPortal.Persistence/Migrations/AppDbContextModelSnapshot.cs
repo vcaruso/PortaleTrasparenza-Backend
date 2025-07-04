@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace ENINET.TransaprentPortal.Persistence.Migrations
+namespace ENINET.TransparentPortal.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot
@@ -101,6 +101,46 @@ namespace ENINET.TransaprentPortal.Persistence.Migrations
                         {
                             Permission = "DOWNLOAD_REPORT",
                             Description = "Download Report"
+                        },
+                        new
+                        {
+                            Permission = "VIEW_ELEMENTS",
+                            Description = "View Elements"
+                        },
+                        new
+                        {
+                            Permission = "ADD_ELEMENTS",
+                            Description = "Add Elements"
+                        },
+                        new
+                        {
+                            Permission = "DELETE_ELEMENTS",
+                            Description = "Delete Elements"
+                        },
+                        new
+                        {
+                            Permission = "UPDATE_ELEMENTS",
+                            Description = "Update Elements"
+                        },
+                        new
+                        {
+                            Permission = "VIEW_SITES",
+                            Description = "View Sites"
+                        },
+                        new
+                        {
+                            Permission = "ADD_SITES",
+                            Description = "Add Sites"
+                        },
+                        new
+                        {
+                            Permission = "DELETE_SITES",
+                            Description = "Delete Sites"
+                        },
+                        new
+                        {
+                            Permission = "UPDATE_SITES",
+                            Description = "Update Sites"
                         });
                 });
 
@@ -130,27 +170,18 @@ namespace ENINET.TransaprentPortal.Persistence.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<string>("Acronym")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
                     b.HasKey("Name");
-
-                    b.HasIndex("Acronym");
 
                     b.ToTable("Elements");
 
                     b.HasData(
                         new
                         {
-                            Name = "aria",
-                            Acronym = "RO"
+                            Name = "aria"
                         },
                         new
                         {
-                            Name = "acqua",
-                            Acronym = "RO"
+                            Name = "acqua"
                         });
                 });
 
@@ -206,6 +237,46 @@ namespace ENINET.TransaprentPortal.Persistence.Migrations
                         },
                         new
                         {
+                            Permission = "VIEW_ELEMENTS",
+                            GroupName = "Administrators"
+                        },
+                        new
+                        {
+                            Permission = "UPDATE_ELEMENTS",
+                            GroupName = "Administrators"
+                        },
+                        new
+                        {
+                            Permission = "ADD_ELEMENTS",
+                            GroupName = "Administrators"
+                        },
+                        new
+                        {
+                            Permission = "DELETE_ELEMENTS",
+                            GroupName = "Administrators"
+                        },
+                        new
+                        {
+                            Permission = "VIEW_SITES",
+                            GroupName = "Administrators"
+                        },
+                        new
+                        {
+                            Permission = "UPDATE_SITES",
+                            GroupName = "Administrators"
+                        },
+                        new
+                        {
+                            Permission = "ADD_SITES",
+                            GroupName = "Administrators"
+                        },
+                        new
+                        {
+                            Permission = "DELETE_SITES",
+                            GroupName = "Administrators"
+                        },
+                        new
+                        {
                             Permission = "UPLOAD_REPORT",
                             GroupName = "Contributors"
                         },
@@ -226,6 +297,31 @@ namespace ENINET.TransaprentPortal.Persistence.Migrations
                         },
                         new
                         {
+                            Permission = "VIEW_ELEMENTS",
+                            GroupName = "Contributors"
+                        },
+                        new
+                        {
+                            Permission = "UPDATE_ELEMENTS",
+                            GroupName = "Contributors"
+                        },
+                        new
+                        {
+                            Permission = "ADD_ELEMENTS",
+                            GroupName = "Contributors"
+                        },
+                        new
+                        {
+                            Permission = "DELETE_ELEMENTS",
+                            GroupName = "Contributors"
+                        },
+                        new
+                        {
+                            Permission = "VIEW_SITES",
+                            GroupName = "Contributors"
+                        },
+                        new
+                        {
                             Permission = "UPLOAD_REPORT",
                             GroupName = "Viewers"
                         },
@@ -242,6 +338,16 @@ namespace ENINET.TransaprentPortal.Persistence.Migrations
                         new
                         {
                             Permission = "DOWNLOAD_REPORT",
+                            GroupName = "Viewers"
+                        },
+                        new
+                        {
+                            Permission = "VIEW_ELEMENTS",
+                            GroupName = "Viewers"
+                        },
+                        new
+                        {
+                            Permission = "VIEW_SITES",
                             GroupName = "Viewers"
                         });
                 });
@@ -362,15 +468,36 @@ namespace ENINET.TransaprentPortal.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ENINET.TransaprentPortal.Persistence.Entities.Element", b =>
+            modelBuilder.Entity("ENINET.TransparentPortal.Persistence.Entities.ElementSite", b =>
                 {
-                    b.HasOne("ENINET.TransaprentPortal.Persistence.Entities.Site", "Site")
-                        .WithMany()
-                        .HasForeignKey("Acronym")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<string>("ElementName")
+                        .HasColumnType("text");
 
-                    b.Navigation("Site");
+                    b.Property<string>("Acronym")
+                        .HasColumnType("text");
+
+                    b.Property<int>("MonthlyReport")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ElementName", "Acronym");
+
+                    b.HasIndex("Acronym");
+
+                    b.ToTable("ElementsSite");
+
+                    b.HasData(
+                        new
+                        {
+                            ElementName = "aria",
+                            Acronym = "RO",
+                            MonthlyReport = 4
+                        },
+                        new
+                        {
+                            ElementName = "acqua",
+                            Acronym = "RO",
+                            MonthlyReport = 6
+                        });
                 });
 
             modelBuilder.Entity("ENINET.TransaprentPortal.Persistence.Entities.GroupPermission", b =>
@@ -447,6 +574,25 @@ namespace ENINET.TransaprentPortal.Persistence.Migrations
                     b.Navigation("ApplicationGroup");
 
                     b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("ENINET.TransparentPortal.Persistence.Entities.ElementSite", b =>
+                {
+                    b.HasOne("ENINET.TransaprentPortal.Persistence.Entities.Site", "Site")
+                        .WithMany()
+                        .HasForeignKey("Acronym")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ENINET.TransaprentPortal.Persistence.Entities.Element", "Element")
+                        .WithMany()
+                        .HasForeignKey("ElementName")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Element");
+
+                    b.Navigation("Site");
                 });
 
             modelBuilder.Entity("ENINET.TransaprentPortal.Persistence.Entities.ApplicationGroup", b =>

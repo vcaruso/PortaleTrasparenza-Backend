@@ -10,5 +10,7 @@ public interface IRepositoryManager
     IUserGroupRepository UserGroup { get; }
     IReportRepository Report { get; }
     IElementRepository Element { get; }
+
+    IElementSiteRepository ElementSite { get; }
     int Save();
 }

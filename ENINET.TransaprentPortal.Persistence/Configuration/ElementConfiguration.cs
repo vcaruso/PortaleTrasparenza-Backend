@@ -6,13 +6,15 @@ namespace ENINET.TransaprentPortal.Persistence.Configuration
 {
     public class ElementConfiguration : IEntityTypeConfiguration<Element>
     {
+        public static readonly string acqua = "acqua";
+        public static readonly string aria = "aria";
         public void Configure(EntityTypeBuilder<Element> builder)
         {
             builder.HasData
             (
 
-                new Element { Name = "aria", Acronym = SiteConfiguration.AcronimoRovigo },
-                new Element { Name = "acqua", Acronym = SiteConfiguration.AcronimoRovigo }
+                new Element { Name = aria },
+                new Element { Name = acqua }
 
 
 

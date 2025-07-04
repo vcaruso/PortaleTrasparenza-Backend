@@ -15,7 +15,8 @@ namespace ENINET.TransparentPortal.Repository
         ISitesUserRepository _raffinerieUserRepository = default!;
         IUserGroupRepository _userGroupRepository = default!;
         IReportRepository _reportRepository = default!;
-        IElementRepository _elementRepository = default;
+        IElementRepository _elementRepository = default!;
+        IElementSiteRepository _elementSiteRepository = default!;
 
 
         public RepositoryManager(AppDbContext context)
@@ -35,7 +36,17 @@ namespace ENINET.TransparentPortal.Repository
         }
 
 
-
+        public IElementSiteRepository ElementSite
+        {
+            get
+            {
+                if (_elementSiteRepository == null)
+                {
+                    _elementSiteRepository = new ElementsSiteRepository(_context);
+                }
+                return (_elementSiteRepository);
+            }
+        }
 
         public IApplicationUserRepository ApplicationUser
         {
@@ -113,7 +124,6 @@ namespace ENINET.TransparentPortal.Repository
 
             }
         }
-
 
 
 
