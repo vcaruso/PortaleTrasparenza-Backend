@@ -12,5 +12,7 @@
         public string Progressive { get; set; } = default!;
         public long FileLength { get; set; } = default!;
 
+        public string Acronym { get; set; } = default!;
+
     }
 }

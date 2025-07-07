@@ -32,23 +32,23 @@ public class AppController : ControllerBase
         _configuration.Bind("Storage", _storageSettings);
     }
 
-    [HttpGet("reports/{element}/{year}/{pageNum}/{pageSize}/{orderby?}")]
-    public async Task<ApiResult<IList<ReportDto>>> GetReport(string element, string year, int pageNum = 1, int pageSize = 15, string orderby = $"Element,Year,-Month,-Progressive")
+    [HttpGet("reports/{site}/{element}/{year}/{pageNum}/{pageSize}/{orderby?}")]
+    public async Task<ApiResult<IList<ReportDto>>> GetReport(string site, string element, string year, int pageNum = 1, int pageSize = 15, string orderby = $"Element,Year,-Month,-Progressive")
     {
         var email = User.Claims.Where(t => t.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").FirstOrDefault();
-        var authorizedSites = User.Claims.Where(t => t.Type == "TransparentSites").FirstOrDefault();
+        var authorizedSites = User.Claims.Where(t => t.Type == "TransparentSites").Select(s => s.Value).ToArray();
         var result = new List<Report>();
         int totalItems = 0;
 
-        if (authorizedSites != null && !String.IsNullOrEmpty(authorizedSites.Value))
+        if (authorizedSites.Length > 0)
         {
             if (element != "*")
             {
-                totalItems = await _repository.Report.FindByCondition(null, x => x.Acronym == authorizedSites.Value && x.ElementName == element && x.Year == year, false)
+                totalItems = await _repository.Report.FindByCondition(null, x => x.Acronym == site && authorizedSites.Contains(x.Acronym) && x.ElementName == element && x.Year == year, false)
                     .OrderBy(orderby)
                     .CountAsync();
 
-                result = await _repository.Report.FindByCondition(null, x => x.Acronym == authorizedSites.Value && x.ElementName == element && x.Year == year, false)
+                result = await _repository.Report.FindByCondition(null, x => x.Acronym == site && authorizedSites.Contains(x.Acronym) && x.ElementName == element && x.Year == year, false)
 
                     .OrderBy(orderby)
 
@@ -58,11 +58,11 @@ public class AppController : ControllerBase
             }
             else
             {
-                totalItems = await _repository.Report.FindByCondition(null, x => x.Acronym == authorizedSites.Value && x.Year == year, false)
+                totalItems = await _repository.Report.FindByCondition(null, x => x.Acronym == site && authorizedSites.Contains(x.Acronym) && x.Year == year, false)
                     .OrderBy(orderby)
                     .CountAsync();
 
-                result = await _repository.Report.FindByCondition(null, x => x.Acronym == authorizedSites.Value && x.Year == year, false)
+                result = await _repository.Report.FindByCondition(null, x => x.Acronym == site && authorizedSites.Contains(x.Acronym) && x.Year == year, false)
                     .OrderBy(orderby)
 
                     .Skip((pageNum - 1) * pageSize)
@@ -92,13 +92,31 @@ public class AppController : ControllerBase
         if (formData.file.Length > 0 && formData.month > 0 && formData.year > 0 && !String.IsNullOrEmpty(formData.element) && formData.progressive > 0)
         {
             var email = User.Claims.Where(t => t.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").FirstOrDefault();
-            var authorizedSites = User.Claims.Where(t => t.Type == "TransparentSites").FirstOrDefault();
+            var authorizedSites = User.Claims.Where(t => t.Type == "TransparentSites").Select(s => s.Value).ToArray();
             if (email != null)
             {
-                var site = authorizedSites!.Value;
+                if (!authorizedSites.Contains(formData.acronym))
+                {
+                    throw new BadHttpRequestException($"Utente non autorizzato all'upload sul sito {formData.acronym}. Non caricato.");
+                }
+                var elementSite = _repository.ElementSite.FindByCondition(null, e => e.Acronym == formData.acronym && e.ElementName == formData.element, false);
+                if (elementSite.Count() == 0)
+                {
+                    throw new BadHttpRequestException($"L'elemento {formData.element} non è previsto nel sito di {formData.acronym}");
+                }
+                var first = elementSite.FirstOrDefault();
+                if (first != null)
+                {
+                    if (first.MonthlyReport < formData.progressive)
+                    {
+                        throw new BadHttpRequestException($"Il numero massimo di elementi {formData.element} per il sito di {formData.acronym} è di {first.MonthlyReport} il progressivo value invece {formData.progressive}");
+                    }
+                }
+
                 var extension = Path.GetExtension(formData.file.FileName);
-                var fileName = $"{site}-{formData.element}-{formData.progressive:00}-{formData.month:00}-{formData.year:0000}{extension}";
+                var fileName = $"{formData.acronym}-{formData.element}-{formData.progressive:00}-{formData.month:00}-{formData.year:0000}{extension}";
                 var path = ReportUtility.SplitFileNameToPath(fileName);
+
                 if (!_repository.Report.Any(p => p.FileName == fileName))
                 {
                     _repository.Report.Create(new Report
@@ -140,16 +158,21 @@ public class AppController : ControllerBase
         if (files.Count > 0)
         {
             var email = User.Claims.Where(t => t.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").FirstOrDefault();
-            var authorizedSites = User.Claims.Where(t => t.Type == "TransparentSites").FirstOrDefault();
+            var authorizedSites = User.Claims.Where(t => t.Type == "TransparentSites").Select(s => s.Value).ToArray();
             if (email != null)
             {
                 var result = new List<UploadResultDto>();
                 foreach (var file in files)
                 {
 
-                    var site = authorizedSites!.Value;
-                    var fileName = $"{site}-{file.FileName}";
+
+                    var fileName = $"{file.FileName}";
                     var path = ReportUtility.SplitFileNameToPath(fileName);
+                    if (!authorizedSites.Contains(path.Site))
+                    {
+                        result.Add(new UploadResultDto { Error = $"Utente non abilitato all'upload sul sito {path.Site}. Non caricato.", Esito = false, FileName = fileName });
+                        continue;
+                    }
                     if (!_repository.Report.Any(p => p.FileName == fileName))
                     {
                         _repository.Report.Create(new Report

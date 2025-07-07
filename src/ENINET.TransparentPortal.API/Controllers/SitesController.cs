@@ -22,13 +22,36 @@ namespace ENINET.TransparentPortal.API.Controllers
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
         [HttpGet("list")]
-        [Authorize(Roles = "VIEW_SITES")]
+        [Authorize(Roles = "Administrators")]
         [ProducesResponseType(typeof(IList<SiteDto>), 200)]
         public async Task<ApiResult<IList<SiteDto>>> GetSite()
         {
-            var sites = await _repository.Site.FindAll(false).ToListAsync();
+            var sites = await _repository.Site
+                .FindAll(false)
+                .OrderBy(o => o.Acronym)
+                .ToListAsync();
             return new ApiResult<IList<SiteDto>> { Data = _mapper.Map<IList<SiteDto>>(sites), Message = "Ok", StatusCode = StatusCodes.Status200OK };
         }
+
+        [HttpGet("listauthorized")]
+        [Authorize(Roles = "Administrators")]
+        [ProducesResponseType(typeof(IList<SiteDto>), 200)]
+        public async Task<ApiResult<IList<SiteDto>>> GetSiteAuthorized()
+        {
+            var email = User.Claims.Where(t => t.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").FirstOrDefault();
+            var authorizedSites = User.Claims.Where(t => t.Type == "TransparentSites").Select(s => s.Value).ToArray();
+            if (authorizedSites != null)
+            {
+                var sites = await _repository.Site
+                .FindByCondition(null, s => authorizedSites.Contains(s.Acronym), false)
+                .OrderBy(o => o.Acronym)
+                .ToListAsync();
+                return new ApiResult<IList<SiteDto>> { Data = _mapper.Map<IList<SiteDto>>(sites), Message = "Ok", StatusCode = StatusCodes.Status200OK };
+            }
+            throw new BadHttpRequestException("User not has authorized site!");
+        }
+
+
 
         [HttpPost("add")]
         [Authorize(Roles = "ADD_SITES")]
@@ -43,7 +66,7 @@ namespace ENINET.TransparentPortal.API.Controllers
             }
             _repository.Site.Create(site);
             _repository.Save();
-            return new ApiResult<SiteDto> { Data = _mapper.Map<SiteDto>(site), Message = "Ok", StatusCode = StatusCodes.Status201Created, PageInfo = null };
+            return await Task.FromResult(new ApiResult<SiteDto> { Data = _mapper.Map<SiteDto>(site), Message = "Ok", StatusCode = StatusCodes.Status201Created, PageInfo = null });
         }
 
         [HttpDelete("delete/{acronym}")]
