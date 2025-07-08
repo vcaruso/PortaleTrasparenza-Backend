@@ -3,6 +3,7 @@ using ENINET.TransaprentPortal.Persistence.Entities;
 using ENINET.TransparentPortal.Persistence.Configuration;
 using ENINET.TransparentPortal.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using static ENINET.TransaprentPortal.Persistence.Configuration.ApplicationUserConfiuration;
 
 namespace ENINET.TransaprentPortal.Persistence
@@ -23,6 +24,7 @@ namespace ENINET.TransaprentPortal.Persistence
             modelBuilder.Entity<ElementSite>().HasKey(k => new { k.ElementName, k.Acronym });
 
 
+
             modelBuilder.ApplyConfiguration(new SiteConfiguration());
             modelBuilder.ApplyConfiguration(new ApplicationGroupConfiguration());
             modelBuilder.ApplyConfiguration(new ApplicationPermissionConfiguration());
@@ -32,7 +34,17 @@ namespace ENINET.TransaprentPortal.Persistence
             modelBuilder.ApplyConfiguration(new SitesUserConfiguration());
             modelBuilder.ApplyConfiguration(new ElementConfiguration());
             modelBuilder.ApplyConfiguration(new ElementSiteConfiguration());
+
+
+
         }
+
+        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+        {
+            configurationBuilder.Conventions.Remove(typeof(CascadeDeleteConvention));
+
+        }
+
         public DbSet<Site> Sites { get; set; }
 
         public DbSet<ApplicationGroup> ApplicationGroups { get; set; }

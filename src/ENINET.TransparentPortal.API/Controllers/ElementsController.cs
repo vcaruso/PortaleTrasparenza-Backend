@@ -113,10 +113,10 @@ namespace ENINET.TransparentPortal.API.Controllers
         public async Task<ApiResult<CommandResultDto>> DeleteElements(string elementName)
         {
             var email = User.Claims.Where(t => t.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").FirstOrDefault();
-            var authorizedSites = User.Claims.Where(t => t.Type == "TransparentSites").FirstOrDefault();
+            var authorizedSites = User.Claims.Where(t => t.Type == "TransparentSites").Select(s => s.Value).ToArray();
             if (authorizedSites != null)
             {
-                var elementSite = await _repository.ElementSite.FindByCondition(null, e => e.ElementName == elementName && e.Acronym == authorizedSites.Value, true).ToListAsync();
+                var elementSite = await _repository.ElementSite.FindByCondition(null, e => e.ElementName == elementName && authorizedSites.Contains(e.Acronym), false).ToListAsync();
 
                 if (elementSite.Count() == 0)
                 {
@@ -128,7 +128,7 @@ namespace ENINET.TransparentPortal.API.Controllers
                     if (es != null)
                     {
                         _repository.ElementSite.Delete(es);
-                        _repository.Save();
+
                         var elementRemaining = await _repository.ElementSite.FindByCondition(null, e => e.ElementName.ToLower() == elementName.ToLower(), true).CountAsync();
                         if (elementRemaining == 0)
                         {
@@ -140,7 +140,7 @@ namespace ENINET.TransparentPortal.API.Controllers
                                 _repository.Save();
                             }
                         }
-
+                        _repository.Save();
                     }
 
 
