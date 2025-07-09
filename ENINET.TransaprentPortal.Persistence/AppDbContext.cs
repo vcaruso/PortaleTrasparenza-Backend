@@ -3,7 +3,6 @@ using ENINET.TransaprentPortal.Persistence.Entities;
 using ENINET.TransparentPortal.Persistence.Configuration;
 using ENINET.TransparentPortal.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using static ENINET.TransaprentPortal.Persistence.Configuration.ApplicationUserConfiuration;
 
 namespace ENINET.TransaprentPortal.Persistence
@@ -41,7 +40,7 @@ namespace ENINET.TransaprentPortal.Persistence
 
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
-            configurationBuilder.Conventions.Remove(typeof(CascadeDeleteConvention));
+            //configurationBuilder.Conventions.Remove(typeof(CascadeDeleteConvention));
 
         }
 
