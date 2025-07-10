@@ -106,6 +106,44 @@ namespace ENINET.TransparentPortal.API.Controllers
 
         }
 
+        /// <summary>
+        /// Aggiunge un nuovo elemento
+        /// </summary>
+        /// <param name="elementDto"></param>
+        /// <returns></returns>
+        /// <exception cref="BadHttpRequestException"></exception>
+        [HttpPost("update/{acronym}/{element}")]
+        [Authorize(Roles = "UPDATE_ELEMENTS")]
+        [ProducesResponseType(typeof(ApiResult<ElementDto>), 200)]
+        [ProducesResponseType(typeof(ApiResult<string>), 400)]
+        public async Task<ApiResult<ElementDto>> EditElements(string acronym, string element, ElementDto elementDto)
+        {
+            var email = User.Claims.Where(t => t.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").FirstOrDefault();
+            var authorizedSites = User.Claims.Where(t => t.Type == "TransparentSites");
+            if (authorizedSites.Where(a => a.Value == elementDto.acronym).FirstOrDefault() != null)
+            {
+                var elementSite = _mapper.Map<ElementSite>(elementDto);
+                var elementDb = await _repository.ElementSite.FindByCondition(null, e => e.ElementName.ToLower() == elementSite.ElementName.ToLower() && e.Acronym == elementSite.Acronym, true).FirstAsync();
+                if (elementDb == null)
+                {
+                    throw new BadHttpRequestException($"Element {elementSite.ElementName} not exists on site {elementSite.Acronym}.");
+                }
+                if (elementSite.MonthlyReport != elementDb.MonthlyReport)
+                {
+                    elementDb.MonthlyReport = elementSite.MonthlyReport;
+                    _repository.Save();
+                }
+
+                return await Task.FromResult(new ApiResult<ElementDto> { Data = _mapper.Map<ElementDto>(elementDb), Message = "Ok", StatusCode = StatusCodes.Status201Created });
+            }
+            throw new BadHttpRequestException($"User not is authorized to add element to site {elementDto.acronym}!");
+
+        }
+
+
+
+
+
         [HttpDelete("delete/{elementName}")]
         [Authorize(Roles = "DELETE_ELEMENTS")]
         [ProducesResponseType(typeof(ApiResult<ElementDto>), 200)]
