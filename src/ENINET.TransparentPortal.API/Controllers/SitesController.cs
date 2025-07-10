@@ -22,7 +22,7 @@ namespace ENINET.TransparentPortal.API.Controllers
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
         [HttpGet("list")]
-        [Authorize(Roles = "Administrators")]
+        [Authorize(Roles = "Administrators,Contributors,Viewers")]
         [ProducesResponseType(typeof(IList<SiteDto>), 200)]
         public async Task<ApiResult<IList<SiteDto>>> GetSite()
         {
@@ -34,7 +34,7 @@ namespace ENINET.TransparentPortal.API.Controllers
         }
 
         [HttpGet("listauthorized")]
-        [Authorize(Roles = "Administrators")]
+        [Authorize(Roles = "Administrators,Contributors,Viewers")]
         [ProducesResponseType(typeof(IList<SiteDto>), 200)]
         public async Task<ApiResult<IList<SiteDto>>> GetSiteAuthorized()
         {
