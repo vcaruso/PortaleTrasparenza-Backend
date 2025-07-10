@@ -38,7 +38,7 @@ public class AuthController : ControllerBase
     [ProducesResponseType(typeof(ApiResult<string>), 500)]
     [SwaggerOperation(Summary = "Ritorna le autorizzazioni dell'utente")]
     //[Authorize(Policy = "AuthZPolicy")]
-    [Authorize(Roles = "Administrators,Users")]
+    [Authorize(Roles = "Administrators,Contributors,Viewers")]
     [HttpGet("authorization")]
     public ApiResult<UserAuthorizationDto> GetUserAuthorization()
     {
@@ -72,12 +72,12 @@ public class AuthController : ControllerBase
         }
         throw new UnauthorizedAccessException();
     }
-    /*
+
     [ProducesResponseType(typeof(ApiResult<UserAuthorizationDto>), 200)]
     [ProducesResponseType(typeof(ApiResult<string>), 401)]
     [ProducesResponseType(typeof(ApiResult<string>), 500)]
     [SwaggerOperation(Summary = "Aggiunge un utente alle Raffinerie")]
-    [Authorize(Policy = "AuthZPolicy")]*/
+    [Authorize(Policy = "AuthZPolicy")]
     [HttpPost("upsertuser")]
     public ApiResult<CommandResultDto> UpsertRaffinerieUser([FromBody] UpsertUserDto utente)
     {
@@ -121,6 +121,8 @@ public class AuthController : ControllerBase
         return new ApiResult<CommandResultDto> { Data = new CommandResultDto("Upsert", "Comando riuscito"), Message = "OK", StatusCode = StatusCodes.Status200OK };
     }
     [HttpDelete("delete/user/{userid}")]
+
+    [Authorize(Policy = "AuthZPolicy")]
     public ApiResult<CommandResultDto> DeleteUser(string userid)
     {
         if (_repository.SitesUser.Any(p => p.UserId == userid.ToLower()) || _repository.UserGroup.Any(p => p.Userid == userid.ToLower()))
