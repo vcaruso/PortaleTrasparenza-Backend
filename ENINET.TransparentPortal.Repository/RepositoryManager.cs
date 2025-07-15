@@ -17,6 +17,9 @@ namespace ENINET.TransparentPortal.Repository
         IReportRepository _reportRepository = default!;
         IElementRepository _elementRepository = default!;
         IElementSiteRepository _elementSiteRepository = default!;
+        ICompliantRepository _compliantRepository = default!;
+        ICompliantOperationRepository _compliantOperationRepository = default!;
+        IComplaintStepRepository _complaintStepsRepository = default!;
 
 
         public RepositoryManager(AppDbContext context)
@@ -125,7 +128,43 @@ namespace ENINET.TransparentPortal.Repository
             }
         }
 
+        public ICompliantOperationRepository CompliantOperation
+        {
+            get
+            {
+                if (_compliantOperationRepository == null)
+                {
+                    _compliantOperationRepository = new CompliantOperationRepository(_context);
+                }
+                return _compliantOperationRepository;
+            }
+        }
 
+
+
+        public ICompliantRepository Compliant
+        {
+            get
+            {
+                if (_compliantRepository == null)
+                {
+                    _compliantRepository = new ComplaintRepository(_context);
+                }
+                return _compliantRepository;
+            }
+        }
+
+        public IComplaintStepRepository CompliantStep
+        {
+            get
+            {
+                if (_complaintStepsRepository == null)
+                {
+                    _complaintStepsRepository = new CompliantStepRepository(_context);
+                }
+                return _complaintStepsRepository;
+            }
+        }
 
         public int Save()
         {

@@ -50,6 +50,36 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ComplaintOperations",
+                columns: table => new
+                {
+                    OperationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OperationName = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComplaintOperations", x => x.OperationId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Complaints",
+                columns: table => new
+                {
+                    ComplaintId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Acronym = table.Column<string>(type: "text", nullable: false),
+                    Opener = table.Column<string>(type: "text", nullable: false),
+                    Text = table.Column<string>(type: "text", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    OpenedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CancelledDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ResolutionDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Complaints", x => x.ComplaintId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Elements",
                 columns: table => new
                 {
@@ -65,7 +95,9 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                 columns: table => new
                 {
                     Acronym = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false)
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    Latitude = table.Column<double>(type: "double precision", nullable: false),
+                    Longitude = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -117,6 +149,34 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                         column: x => x.Userid,
                         principalTable: "ApplicationUsers",
                         principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ComplaintSteps",
+                columns: table => new
+                {
+                    ResolutionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ComplaintId = table.Column<Guid>(type: "uuid", nullable: false),
+                    StepDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Operator = table.Column<string>(type: "text", nullable: false),
+                    OperationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OperationText = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComplaintSteps", x => x.ResolutionId);
+                    table.ForeignKey(
+                        name: "FK_ComplaintSteps_ComplaintOperations_OperationId",
+                        column: x => x.OperationId,
+                        principalTable: "ComplaintOperations",
+                        principalColumn: "OperationId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ComplaintSteps_Complaints_ComplaintId",
+                        column: x => x.ComplaintId,
+                        principalTable: "Complaints",
+                        principalColumn: "ComplaintId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -215,18 +275,22 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                 columns: new[] { "Permission", "Description" },
                 values: new object[,]
                 {
+                    { "ADD_COMPLAINT_OPERATION", "Add Complaint Operation" },
                     { "ADD_ELEMENTS", "Add Elements" },
                     { "ADD_SITES", "Add Sites" },
                     { "ADD_USER", "Aggiunge un utente all'applicazione" },
                     { "APPLICATION_USERS_MANAGE", "Gestione utenti applicazione" },
+                    { "DELETE_COMPLAINT_OPERATION", "Delete Complaint Operation" },
                     { "DELETE_ELEMENTS", "Delete Elements" },
                     { "DELETE_REPORT", "Delete Report" },
                     { "DELETE_SITES", "Delete Sites" },
                     { "DELETE_USER", "Rimuove un utente all'applicazione" },
                     { "DOWNLOAD_REPORT", "Download Report" },
+                    { "UPDATE_COMPLAINT_OPERATION", "Update Complaint Operation" },
                     { "UPDATE_ELEMENTS", "Update Elements" },
                     { "UPDATE_SITES", "Update Sites" },
                     { "UPLOAD_REPORT", "Upload Report" },
+                    { "VIEW_COMPLAINT", "View Complaint" },
                     { "VIEW_ELEMENTS", "View Elements" },
                     { "VIEW_REPORT", "View Report" },
                     { "VIEW_SITES", "View Sites" }
@@ -236,6 +300,17 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                 table: "ApplicationUsers",
                 columns: new[] { "UserId", "UserName" },
                 values: new object[] { "vincenzo.caruso@external.enilive.com", "vincenzo.caruso@external.enilive.com" });
+
+            migrationBuilder.InsertData(
+                table: "ComplaintOperations",
+                columns: new[] { "OperationId", "OperationName" },
+                values: new object[,]
+                {
+                    { new Guid("1618fcd2-d719-4e29-9336-d0e2d218cd25"), "SOLVED" },
+                    { new Guid("1d0df814-5b06-42cd-9448-6be5191f2071"), "OPENED" },
+                    { new Guid("b10757d0-bf65-44db-9bae-841163c8c70b"), "CANCELED" },
+                    { new Guid("f5a0fabf-ec99-42ad-ac4a-78b6d32a71a2"), "ACTION" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Elements",
@@ -248,8 +323,8 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
 
             migrationBuilder.InsertData(
                 table: "Sites",
-                columns: new[] { "Acronym", "Description" },
-                values: new object[] { "RO", "Sito di Rovigo" });
+                columns: new[] { "Acronym", "Description", "Latitude", "Longitude" },
+                values: new object[] { "RO", "Sito di Rovigo", 0.0, 0.0 });
 
             migrationBuilder.InsertData(
                 table: "ElementsSite",
@@ -265,11 +340,17 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                 columns: new[] { "GroupName", "Permission" },
                 values: new object[,]
                 {
+                    { "Administrators", "ADD_COMPLAINT_OPERATION" },
+                    { "Contributors", "ADD_COMPLAINT_OPERATION" },
+                    { "Viewers", "ADD_COMPLAINT_OPERATION" },
                     { "Administrators", "ADD_ELEMENTS" },
                     { "Contributors", "ADD_ELEMENTS" },
                     { "Administrators", "ADD_SITES" },
                     { "Administrators", "ADD_USER" },
                     { "Administrators", "APPLICATION_USERS_MANAGE" },
+                    { "Administrators", "DELETE_COMPLAINT_OPERATION" },
+                    { "Contributors", "DELETE_COMPLAINT_OPERATION" },
+                    { "Viewers", "DELETE_COMPLAINT_OPERATION" },
                     { "Administrators", "DELETE_ELEMENTS" },
                     { "Contributors", "DELETE_ELEMENTS" },
                     { "Administrators", "DELETE_REPORT" },
@@ -280,12 +361,18 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                     { "Administrators", "DOWNLOAD_REPORT" },
                     { "Contributors", "DOWNLOAD_REPORT" },
                     { "Viewers", "DOWNLOAD_REPORT" },
+                    { "Administrators", "UPDATE_COMPLAINT_OPERATION" },
+                    { "Contributors", "UPDATE_COMPLAINT_OPERATION" },
+                    { "Viewers", "UPDATE_COMPLAINT_OPERATION" },
                     { "Administrators", "UPDATE_ELEMENTS" },
                     { "Contributors", "UPDATE_ELEMENTS" },
                     { "Administrators", "UPDATE_SITES" },
                     { "Administrators", "UPLOAD_REPORT" },
                     { "Contributors", "UPLOAD_REPORT" },
                     { "Viewers", "UPLOAD_REPORT" },
+                    { "Administrators", "VIEW_COMPLAINT" },
+                    { "Contributors", "VIEW_COMPLAINT" },
+                    { "Viewers", "VIEW_COMPLAINT" },
                     { "Administrators", "VIEW_ELEMENTS" },
                     { "Contributors", "VIEW_ELEMENTS" },
                     { "Viewers", "VIEW_ELEMENTS" },
@@ -306,6 +393,16 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                 table: "UserGroups",
                 columns: new[] { "GroupName", "Userid" },
                 values: new object[] { "Administrators", "vincenzo.caruso@external.enilive.com" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComplaintSteps_ComplaintId",
+                table: "ComplaintSteps",
+                column: "ComplaintId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComplaintSteps_OperationId",
+                table: "ComplaintSteps",
+                column: "OperationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ElementsSite_Acronym",
@@ -342,6 +439,9 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ComplaintSteps");
+
+            migrationBuilder.DropTable(
                 name: "ElementsSite");
 
             migrationBuilder.DropTable(
@@ -355,6 +455,12 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserGroups");
+
+            migrationBuilder.DropTable(
+                name: "ComplaintOperations");
+
+            migrationBuilder.DropTable(
+                name: "Complaints");
 
             migrationBuilder.DropTable(
                 name: "ApplicationPermissions");

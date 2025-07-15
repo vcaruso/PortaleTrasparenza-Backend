@@ -12,5 +12,10 @@ public interface IRepositoryManager
     IElementRepository Element { get; }
 
     IElementSiteRepository ElementSite { get; }
+
+    ICompliantOperationRepository CompliantOperation { get; }
+    ICompliantRepository Compliant { get; }
+    IComplaintStepRepository CompliantStep { get; }
+
     int Save();
 }

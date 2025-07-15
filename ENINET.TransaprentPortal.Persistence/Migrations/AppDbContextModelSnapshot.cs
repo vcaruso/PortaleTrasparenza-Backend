@@ -141,6 +141,26 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                         {
                             Permission = "UPDATE_SITES",
                             Description = "Update Sites"
+                        },
+                        new
+                        {
+                            Permission = "VIEW_COMPLAINT",
+                            Description = "View Complaint"
+                        },
+                        new
+                        {
+                            Permission = "ADD_COMPLAINT_OPERATION",
+                            Description = "Add Complaint Operation"
+                        },
+                        new
+                        {
+                            Permission = "DELETE_COMPLAINT_OPERATION",
+                            Description = "Delete Complaint Operation"
+                        },
+                        new
+                        {
+                            Permission = "UPDATE_COMPLAINT_OPERATION",
+                            Description = "Update Complaint Operation"
                         });
                 });
 
@@ -277,6 +297,26 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                         },
                         new
                         {
+                            Permission = "ADD_COMPLAINT_OPERATION",
+                            GroupName = "Administrators"
+                        },
+                        new
+                        {
+                            Permission = "DELETE_COMPLAINT_OPERATION",
+                            GroupName = "Administrators"
+                        },
+                        new
+                        {
+                            Permission = "UPDATE_COMPLAINT_OPERATION",
+                            GroupName = "Administrators"
+                        },
+                        new
+                        {
+                            Permission = "VIEW_COMPLAINT",
+                            GroupName = "Administrators"
+                        },
+                        new
+                        {
                             Permission = "UPLOAD_REPORT",
                             GroupName = "Contributors"
                         },
@@ -322,6 +362,26 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                         },
                         new
                         {
+                            Permission = "ADD_COMPLAINT_OPERATION",
+                            GroupName = "Contributors"
+                        },
+                        new
+                        {
+                            Permission = "DELETE_COMPLAINT_OPERATION",
+                            GroupName = "Contributors"
+                        },
+                        new
+                        {
+                            Permission = "UPDATE_COMPLAINT_OPERATION",
+                            GroupName = "Contributors"
+                        },
+                        new
+                        {
+                            Permission = "VIEW_COMPLAINT",
+                            GroupName = "Contributors"
+                        },
+                        new
+                        {
                             Permission = "UPLOAD_REPORT",
                             GroupName = "Viewers"
                         },
@@ -348,6 +408,26 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                         new
                         {
                             Permission = "VIEW_SITES",
+                            GroupName = "Viewers"
+                        },
+                        new
+                        {
+                            Permission = "ADD_COMPLAINT_OPERATION",
+                            GroupName = "Viewers"
+                        },
+                        new
+                        {
+                            Permission = "DELETE_COMPLAINT_OPERATION",
+                            GroupName = "Viewers"
+                        },
+                        new
+                        {
+                            Permission = "UPDATE_COMPLAINT_OPERATION",
+                            GroupName = "Viewers"
+                        },
+                        new
+                        {
+                            Permission = "VIEW_COMPLAINT",
                             GroupName = "Viewers"
                         });
                 });
@@ -476,6 +556,110 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ENINET.TransparentPortal.Persistence.Entities.Complaint", b =>
+                {
+                    b.Property<Guid>("ComplaintId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Acronym")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CancelledDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("OpenedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Opener")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ResolutionDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("ComplaintId");
+
+                    b.ToTable("Complaints");
+                });
+
+            modelBuilder.Entity("ENINET.TransparentPortal.Persistence.Entities.ComplaintOperation", b =>
+                {
+                    b.Property<Guid>("OperationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("OperationName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("OperationId");
+
+                    b.ToTable("ComplaintOperations");
+
+                    b.HasData(
+                        new
+                        {
+                            OperationId = new Guid("1d0df814-5b06-42cd-9448-6be5191f2071"),
+                            OperationName = "OPENED"
+                        },
+                        new
+                        {
+                            OperationId = new Guid("1618fcd2-d719-4e29-9336-d0e2d218cd25"),
+                            OperationName = "SOLVED"
+                        },
+                        new
+                        {
+                            OperationId = new Guid("b10757d0-bf65-44db-9bae-841163c8c70b"),
+                            OperationName = "CANCELED"
+                        },
+                        new
+                        {
+                            OperationId = new Guid("f5a0fabf-ec99-42ad-ac4a-78b6d32a71a2"),
+                            OperationName = "ACTION"
+                        });
+                });
+
+            modelBuilder.Entity("ENINET.TransparentPortal.Persistence.Entities.ComplaintStep", b =>
+                {
+                    b.Property<Guid>("ResolutionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ComplaintId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OperationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("OperationText")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Operator")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("StepDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("ResolutionId");
+
+                    b.HasIndex("ComplaintId");
+
+                    b.HasIndex("OperationId");
+
+                    b.ToTable("ComplaintSteps");
+                });
+
             modelBuilder.Entity("ENINET.TransparentPortal.Persistence.Entities.ElementSite", b =>
                 {
                     b.Property<string>("ElementName")
@@ -584,6 +768,25 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
+            modelBuilder.Entity("ENINET.TransparentPortal.Persistence.Entities.ComplaintStep", b =>
+                {
+                    b.HasOne("ENINET.TransparentPortal.Persistence.Entities.Complaint", "Complaint")
+                        .WithMany("Steps")
+                        .HasForeignKey("ComplaintId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ENINET.TransparentPortal.Persistence.Entities.ComplaintOperation", "Operation")
+                        .WithMany()
+                        .HasForeignKey("OperationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Complaint");
+
+                    b.Navigation("Operation");
+                });
+
             modelBuilder.Entity("ENINET.TransparentPortal.Persistence.Entities.ElementSite", b =>
                 {
                     b.HasOne("ENINET.TransaprentPortal.Persistence.Entities.Site", "Site")
@@ -615,6 +818,11 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                     b.Navigation("SitesUsers");
 
                     b.Navigation("UserGroups");
+                });
+
+            modelBuilder.Entity("ENINET.TransparentPortal.Persistence.Entities.Complaint", b =>
+                {
+                    b.Navigation("Steps");
                 });
 #pragma warning restore 612, 618
         }

@@ -33,6 +33,7 @@ namespace ENINET.TransaprentPortal.Persistence
             modelBuilder.ApplyConfiguration(new SitesUserConfiguration());
             modelBuilder.ApplyConfiguration(new ElementConfiguration());
             modelBuilder.ApplyConfiguration(new ElementSiteConfiguration());
+            modelBuilder.ApplyConfiguration(new ComplaintOperationConfiguration());
 
 
 
@@ -54,8 +55,10 @@ namespace ENINET.TransaprentPortal.Persistence
         public DbSet<UserGroup> UserGroups { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<Element> Elements { get; set; }
-
         public DbSet<ElementSite> ElementsSite { get; set; }
+        public DbSet<ComplaintOperation> ComplaintOperations { get; set; }
+        public DbSet<Complaint> Complaints { get; set; }
+        public DbSet<ComplaintStep> ComplaintSteps { get; set; }
 
     }
 }
