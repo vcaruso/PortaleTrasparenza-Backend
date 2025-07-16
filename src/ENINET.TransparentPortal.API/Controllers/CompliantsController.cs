@@ -20,7 +20,7 @@ namespace ENINET.TransparentPortal.API.Controllers
             this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        [HttpPost]
+        [HttpPost("add")]
         public async Task<ApiResult<Guid>> AddCompliant([FromBody] AddCompliantDto compliantDto)
         {
             var compliant = mapper.Map<Complaint>(compliantDto);
@@ -32,7 +32,7 @@ namespace ENINET.TransparentPortal.API.Controllers
             {
                 throw new BadHttpRequestException("Text is required", StatusCodes.Status400BadRequest);
             }
-            compliant.CreationDate = new DateTime();
+            compliant.CreationDate = DateTime.Now.ToUniversalTime();
             compliant.ComplaintId = Guid.NewGuid();
             repository.Compliant.Create(compliant);
             repository.Save();
@@ -40,7 +40,7 @@ namespace ENINET.TransparentPortal.API.Controllers
 
         }
 
-        [HttpPost]
+        [HttpPost("addStep")]
         public async Task<ApiResult<Guid>> AddStep([FromBody] AddCompliantStepDto stepDto)
         {
 
