@@ -139,7 +139,7 @@ public class AuthController : ControllerBase
     [ProducesResponseType(typeof(ApiResult<string>), 500)]
     [SwaggerOperation(Summary = "Ritorna l'elenco delle Raffinerie ")]
     [HttpGet("raffinerie")]
-    [Authorize(Policy = "AuthZPolicy")]
+    //[Authorize(Policy = "AuthZPolicy")]
     public ApiResult<SiteDto[]> GeSites()
     {
 
