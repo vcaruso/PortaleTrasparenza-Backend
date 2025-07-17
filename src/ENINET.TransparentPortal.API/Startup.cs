@@ -3,6 +3,7 @@ using ENINET.TransparentPortal.API.Configuration;
 using ENINET.TransparentPortal.API.Extension;
 using ENINET.TransparentPortal.API.Middleware;
 using ENINET.TransparentPortal.API.Services.AuthService;
+using ENINET.TransparentPortal.API.Services.MailAuth;
 using ENINET.TransparentPortal.API.Services.Storage;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,6 +36,7 @@ namespace ENINET.TransparentPortal.API
             services.ConfigureRepositoryManager();
             services.AddScoped<IStorageManager, LocalStorageManager>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IMailAuth, SmtpRaffineria>();
             //Aggiungiamo le impostazioni per autorizzare l'autorizzazione AD di Azure
             services.ConfigureAzureADAuthorization(_configuration);
 

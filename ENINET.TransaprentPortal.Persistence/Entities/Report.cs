@@ -29,5 +29,8 @@ namespace ENINET.TransaprentPortal.Persistence.Entities
         public Element Element { get; set; } = default!;
 
         public long FileLength { get; set; }
+
+
+
     }
 }

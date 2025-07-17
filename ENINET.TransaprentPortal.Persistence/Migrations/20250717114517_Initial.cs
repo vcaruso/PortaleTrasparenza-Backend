@@ -62,24 +62,6 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Complaints",
-                columns: table => new
-                {
-                    ComplaintId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Acronym = table.Column<string>(type: "text", nullable: false),
-                    Opener = table.Column<string>(type: "text", nullable: false),
-                    Text = table.Column<string>(type: "text", nullable: false),
-                    CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    OpenedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CancelledDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ResolutionDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Complaints", x => x.ComplaintId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Elements",
                 columns: table => new
                 {
@@ -88,6 +70,19 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Elements", x => x.Name);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GuestAuths",
+                columns: table => new
+                {
+                    RandomCode = table.Column<Guid>(type: "uuid", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GuestAuths", x => x.RandomCode);
                 });
 
             migrationBuilder.CreateTable(
@@ -153,30 +148,33 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ComplaintSteps",
+                name: "Complaints",
                 columns: table => new
                 {
-                    ResolutionId = table.Column<Guid>(type: "uuid", nullable: false),
                     ComplaintId = table.Column<Guid>(type: "uuid", nullable: false),
-                    StepDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Operator = table.Column<string>(type: "text", nullable: false),
-                    OperationId = table.Column<Guid>(type: "uuid", nullable: false),
-                    OperationText = table.Column<string>(type: "text", nullable: false)
+                    RandomCode = table.Column<Guid>(type: "uuid", nullable: false),
+                    Acronym = table.Column<string>(type: "text", nullable: false),
+                    Opener = table.Column<string>(type: "text", nullable: false),
+                    Text = table.Column<string>(type: "text", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    OpenedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CancelledDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ResolutionDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ComplaintSteps", x => x.ResolutionId);
+                    table.PrimaryKey("PK_Complaints", x => x.ComplaintId);
                     table.ForeignKey(
-                        name: "FK_ComplaintSteps_ComplaintOperations_OperationId",
-                        column: x => x.OperationId,
-                        principalTable: "ComplaintOperations",
-                        principalColumn: "OperationId",
+                        name: "FK_Complaints_GuestAuths_RandomCode",
+                        column: x => x.RandomCode,
+                        principalTable: "GuestAuths",
+                        principalColumn: "RandomCode",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ComplaintSteps_Complaints_ComplaintId",
-                        column: x => x.ComplaintId,
-                        principalTable: "Complaints",
-                        principalColumn: "ComplaintId",
+                        name: "FK_Complaints_Sites_Acronym",
+                        column: x => x.Acronym,
+                        principalTable: "Sites",
+                        principalColumn: "Acronym",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -260,6 +258,34 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ComplaintSteps",
+                columns: table => new
+                {
+                    ResolutionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ComplaintId = table.Column<Guid>(type: "uuid", nullable: false),
+                    StepDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Operator = table.Column<string>(type: "text", nullable: false),
+                    OperationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OperationText = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComplaintSteps", x => x.ResolutionId);
+                    table.ForeignKey(
+                        name: "FK_ComplaintSteps_ComplaintOperations_OperationId",
+                        column: x => x.OperationId,
+                        principalTable: "ComplaintOperations",
+                        principalColumn: "OperationId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ComplaintSteps_Complaints_ComplaintId",
+                        column: x => x.ComplaintId,
+                        principalTable: "Complaints",
+                        principalColumn: "ComplaintId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "ApplicationGroups",
                 columns: new[] { "GroupName", "GroupDescription" },
@@ -306,10 +332,10 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                 columns: new[] { "OperationId", "OperationName" },
                 values: new object[,]
                 {
-                    { new Guid("1618fcd2-d719-4e29-9336-d0e2d218cd25"), "SOLVED" },
-                    { new Guid("1d0df814-5b06-42cd-9448-6be5191f2071"), "OPENED" },
-                    { new Guid("b10757d0-bf65-44db-9bae-841163c8c70b"), "CANCELED" },
-                    { new Guid("f5a0fabf-ec99-42ad-ac4a-78b6d32a71a2"), "ACTION" }
+                    { new Guid("42ed4b08-2989-4898-a817-01120d3496af"), "OPENED" },
+                    { new Guid("94123088-171f-4561-a83f-3c9c5072ae93"), "CANCELED" },
+                    { new Guid("b0e7125b-998c-492b-b6ea-afceb4a5d1d1"), "ACTION" },
+                    { new Guid("b5822dbf-9916-47a6-ba53-2b4472d8b562"), "SOLVED" }
                 });
 
             migrationBuilder.InsertData(
@@ -395,6 +421,16 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                 values: new object[] { "Administrators", "vincenzo.caruso@external.enilive.com" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Complaints_Acronym",
+                table: "Complaints",
+                column: "Acronym");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Complaints_RandomCode",
+                table: "Complaints",
+                column: "RandomCode");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ComplaintSteps_ComplaintId",
                 table: "ComplaintSteps",
                 column: "ComplaintId");
@@ -469,13 +505,16 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                 name: "Elements");
 
             migrationBuilder.DropTable(
-                name: "Sites");
-
-            migrationBuilder.DropTable(
                 name: "ApplicationGroups");
 
             migrationBuilder.DropTable(
                 name: "ApplicationUsers");
+
+            migrationBuilder.DropTable(
+                name: "GuestAuths");
+
+            migrationBuilder.DropTable(
+                name: "Sites");
         }
     }
 }

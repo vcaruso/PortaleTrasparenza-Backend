@@ -579,6 +579,9 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("RandomCode")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime?>("ResolutionDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -587,6 +590,10 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("ComplaintId");
+
+                    b.HasIndex("Acronym");
+
+                    b.HasIndex("RandomCode");
 
                     b.ToTable("Complaints");
                 });
@@ -608,22 +615,22 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            OperationId = new Guid("1d0df814-5b06-42cd-9448-6be5191f2071"),
+                            OperationId = new Guid("42ed4b08-2989-4898-a817-01120d3496af"),
                             OperationName = "OPENED"
                         },
                         new
                         {
-                            OperationId = new Guid("1618fcd2-d719-4e29-9336-d0e2d218cd25"),
+                            OperationId = new Guid("b5822dbf-9916-47a6-ba53-2b4472d8b562"),
                             OperationName = "SOLVED"
                         },
                         new
                         {
-                            OperationId = new Guid("b10757d0-bf65-44db-9bae-841163c8c70b"),
+                            OperationId = new Guid("94123088-171f-4561-a83f-3c9c5072ae93"),
                             OperationName = "CANCELED"
                         },
                         new
                         {
-                            OperationId = new Guid("f5a0fabf-ec99-42ad-ac4a-78b6d32a71a2"),
+                            OperationId = new Guid("b0e7125b-998c-492b-b6ea-afceb4a5d1d1"),
                             OperationName = "ACTION"
                         });
                 });
@@ -692,6 +699,24 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ENINET.TransparentPortal.Persistence.Entities.GuestAuth", b =>
+                {
+                    b.Property<Guid>("RandomCode")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("RandomCode");
+
+                    b.ToTable("GuestAuths");
+                });
+
             modelBuilder.Entity("ENINET.TransaprentPortal.Persistence.Entities.GroupPermission", b =>
                 {
                     b.HasOne("ENINET.TransaprentPortal.Persistence.Entities.ApplicationGroup", "ApplicationGroup")
@@ -714,7 +739,7 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
             modelBuilder.Entity("ENINET.TransaprentPortal.Persistence.Entities.Report", b =>
                 {
                     b.HasOne("ENINET.TransaprentPortal.Persistence.Entities.Site", "Site")
-                        .WithMany()
+                        .WithMany("Reports")
                         .HasForeignKey("Acronym")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -733,7 +758,7 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
             modelBuilder.Entity("ENINET.TransaprentPortal.Persistence.Entities.SitesUser", b =>
                 {
                     b.HasOne("ENINET.TransaprentPortal.Persistence.Entities.Site", "Site")
-                        .WithMany()
+                        .WithMany("SitesUsers")
                         .HasForeignKey("Acronym")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -768,6 +793,25 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
+            modelBuilder.Entity("ENINET.TransparentPortal.Persistence.Entities.Complaint", b =>
+                {
+                    b.HasOne("ENINET.TransaprentPortal.Persistence.Entities.Site", "Site")
+                        .WithMany("Complaints")
+                        .HasForeignKey("Acronym")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ENINET.TransparentPortal.Persistence.Entities.GuestAuth", "GuestAuth")
+                        .WithMany()
+                        .HasForeignKey("RandomCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GuestAuth");
+
+                    b.Navigation("Site");
+                });
+
             modelBuilder.Entity("ENINET.TransparentPortal.Persistence.Entities.ComplaintStep", b =>
                 {
                     b.HasOne("ENINET.TransparentPortal.Persistence.Entities.Complaint", "Complaint")
@@ -790,7 +834,7 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
             modelBuilder.Entity("ENINET.TransparentPortal.Persistence.Entities.ElementSite", b =>
                 {
                     b.HasOne("ENINET.TransaprentPortal.Persistence.Entities.Site", "Site")
-                        .WithMany()
+                        .WithMany("ElementsSite")
                         .HasForeignKey("Acronym")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -818,6 +862,17 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                     b.Navigation("SitesUsers");
 
                     b.Navigation("UserGroups");
+                });
+
+            modelBuilder.Entity("ENINET.TransaprentPortal.Persistence.Entities.Site", b =>
+                {
+                    b.Navigation("Complaints");
+
+                    b.Navigation("ElementsSite");
+
+                    b.Navigation("Reports");
+
+                    b.Navigation("SitesUsers");
                 });
 
             modelBuilder.Entity("ENINET.TransparentPortal.Persistence.Entities.Complaint", b =>

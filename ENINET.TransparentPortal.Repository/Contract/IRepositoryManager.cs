@@ -16,6 +16,6 @@ public interface IRepositoryManager
     ICompliantOperationRepository CompliantOperation { get; }
     ICompliantRepository Compliant { get; }
     IComplaintStepRepository CompliantStep { get; }
-
+    IGuestAuthRepository GuestAuth { get; }
     int Save();
 }

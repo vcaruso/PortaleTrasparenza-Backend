@@ -21,6 +21,11 @@ namespace ENINET.TransaprentPortal.Persistence
             modelBuilder.Entity<UserGroup>().HasKey(k => new { k.Userid, k.GroupName });
             modelBuilder.Entity<SitesUser>().HasKey(k => new { k.UserId, k.Acronym });
             modelBuilder.Entity<ElementSite>().HasKey(k => new { k.ElementName, k.Acronym });
+            modelBuilder.Entity<Complaint>().HasOne(c => c.GuestAuth)
+                .WithMany()
+                .HasForeignKey(c => c.RandomCode)
+                .OnDelete(DeleteBehavior.Cascade);
+
 
 
 
@@ -34,6 +39,7 @@ namespace ENINET.TransaprentPortal.Persistence
             modelBuilder.ApplyConfiguration(new ElementConfiguration());
             modelBuilder.ApplyConfiguration(new ElementSiteConfiguration());
             modelBuilder.ApplyConfiguration(new ComplaintOperationConfiguration());
+
 
 
 
@@ -59,6 +65,8 @@ namespace ENINET.TransaprentPortal.Persistence
         public DbSet<ComplaintOperation> ComplaintOperations { get; set; }
         public DbSet<Complaint> Complaints { get; set; }
         public DbSet<ComplaintStep> ComplaintSteps { get; set; }
+
+        public DbSet<GuestAuth> GuestAuths { get; set; }
 
     }
 }

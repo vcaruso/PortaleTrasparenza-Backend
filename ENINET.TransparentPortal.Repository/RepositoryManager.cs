@@ -20,6 +20,7 @@ namespace ENINET.TransparentPortal.Repository
         ICompliantRepository _compliantRepository = default!;
         ICompliantOperationRepository _compliantOperationRepository = default!;
         IComplaintStepRepository _complaintStepsRepository = default!;
+        IGuestAuthRepository _guestRepository = default!;
 
 
         public RepositoryManager(AppDbContext context)
@@ -163,6 +164,18 @@ namespace ENINET.TransparentPortal.Repository
                     _complaintStepsRepository = new CompliantStepRepository(_context);
                 }
                 return _complaintStepsRepository;
+            }
+        }
+
+        public IGuestAuthRepository GuestAuth
+        {
+            get
+            {
+                if (_guestRepository == null)
+                {
+                    _guestRepository = new GuestAuthRepository(_context);
+                }
+                return _guestRepository;
             }
         }
 
