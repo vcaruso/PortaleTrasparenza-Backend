@@ -1,6 +1,6 @@
 ﻿namespace ENINET.TransparentPortal.API.Dtos.Compliant
 {
-    public class AddCompliantStepDto
+    public class AddComplaintStepDto
     {
         public Guid ComplaintId { get; set; }
         public Guid OperationId { get; set; }

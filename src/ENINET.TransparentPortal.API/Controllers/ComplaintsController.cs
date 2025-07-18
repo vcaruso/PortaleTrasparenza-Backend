@@ -1,28 +1,66 @@
 ﻿using AutoMapper;
+using ENINET.TransaprentPortal.Persistence.Configuration;
 using ENINET.TransparentPortal.API.Dtos;
 using ENINET.TransparentPortal.API.Dtos.Compliant;
 using ENINET.TransparentPortal.API.Services.MailAuth;
 using ENINET.TransparentPortal.Persistence.Configuration;
 using ENINET.TransparentPortal.Persistence.Entities;
 using ENINET.TransparentPortal.Repository.Contract;
+using ENINET.TransparentPortal.Repository.Extension;
+
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 namespace ENINET.TransparentPortal.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CompliantsController : ControllerBase
+    public class ComplaintsController : ControllerBase
     {
         private readonly IRepositoryManager _repository;
         private readonly IMapper _mapper;
         private readonly IMailAuth _mailAuth;
 
-        public CompliantsController(IRepositoryManager repository, IMapper mapper, IMailAuth mailAuth)
+        public ComplaintsController(IRepositoryManager repository, IMapper mapper, IMailAuth mailAuth)
         {
             this._repository = repository ?? throw new ArgumentNullException(nameof(repository));
             this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             this._mailAuth = mailAuth ?? throw new ArgumentNullException(nameof(mailAuth));
         }
+
+        [HttpGet("list/{site}/{year}/{pageNum}/{pageSize}/{orderby}")]
+        [Authorize(Roles = nameof(ApplicationPermissionConfiguration.VIEW_COMPLAINT))]
+        public async Task<ApiResult<IList<ComplaintDto>>> GetComplaint(string site, string year, int pageNum = 1, int pageSize = 15, string orderby = $"Acronym,CreationDate")
+        {
+            var email = User.Claims.Where(t => t.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").FirstOrDefault();
+            var authorizedSites = User.Claims.Where(t => t.Type == "TransparentSites").Select(s => s.Value).ToArray();
+
+            int totalItems = 0;
+            if (authorizedSites.Length > 0)
+            {
+                totalItems = await _repository.Compliant.FindByCondition(null, c => authorizedSites.Contains(c.Site.Acronym) && c.CreationDate.Year.ToString() == year, false).CountAsync();
+                var items = await _repository.Compliant.FindByCondition(null, c => authorizedSites.Contains(c.Site.Acronym) && c.CreationDate.Year.ToString() == year, false)
+                    .OrderBy(orderby)
+                    .Skip((pageNum - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+                var numPages = (totalItems / pageSize) + (totalItems % pageSize != 0 ? 1 : 0);
+
+                return new ApiResult<IList<ComplaintDto>>
+                {
+                    Data = _mapper.Map<List<ComplaintDto>>(items),
+                    Message = "Ok",
+                    StatusCode = StatusCodes.Status200OK,
+                    PageInfo = new PagedInfo(totalItems, (int)numPages, pageSize, pageNum)
+                };
+
+            }
+            throw new UnauthorizedAccessException();
+
+        }
+
 
         [HttpPost("sendauthorization")]
         public Task<ApiResult<CommandResultDto>> GenerateAuthCode([FromBody] GuestAuthRequestDto request)
@@ -71,7 +109,7 @@ namespace ENINET.TransparentPortal.API.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<ApiResult<Guid>> AddCompliant([FromBody] AddCompliantDto compliantDto)
+        public async Task<ApiResult<Guid>> AddCompliant([FromBody] AddComplaintDto compliantDto)
         {
             var compliant = _mapper.Map<Complaint>(compliantDto);
             if (String.IsNullOrEmpty(compliantDto.Opener))
@@ -102,7 +140,8 @@ namespace ENINET.TransparentPortal.API.Controllers
         }
 
         [HttpPost("addStep")]
-        public async Task<ApiResult<Guid>> AddStep([FromBody] AddCompliantStepDto stepDto)
+        [Authorize(Roles = nameof(ApplicationPermissionConfiguration.VIEW_COMPLAINT_STEP))]
+        public async Task<ApiResult<Guid>> AddStep([FromBody] AddComplaintStepDto stepDto)
         {
 
             var email = User.Claims.Where(t => t.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").FirstOrDefault();

@@ -1,5 +1,6 @@
 ﻿using AnalisiHubApi.Dtos.App;
 using AutoMapper;
+using ENINET.TransaprentPortal.Persistence.Configuration;
 using ENINET.TransaprentPortal.Persistence.Entities;
 using ENINET.TransparentPortal.API.Dtos;
 using ENINET.TransparentPortal.Repository.Contract;
@@ -54,7 +55,7 @@ namespace ENINET.TransparentPortal.API.Controllers
 
 
         [HttpPost("add")]
-        [Authorize(Roles = "ADD_SITES")]
+        [Authorize(Roles = nameof(ApplicationPermissionConfiguration.ADD_SITES))]
         [ProducesResponseType(typeof(SiteDto), 200)]
         [ProducesResponseType(typeof(ApiResult<string>), 400)]
         public async Task<ApiResult<SiteDto>> AddSite(SiteDto siteDto)
@@ -70,7 +71,7 @@ namespace ENINET.TransparentPortal.API.Controllers
         }
 
         [HttpDelete("delete/{acronym}")]
-        [Authorize(Roles = "DELETE_SITES")]
+        [Authorize(Roles = nameof(ApplicationPermissionConfiguration.DELETE_SITES))]
         [ProducesResponseType(typeof(CommandResultDto), 200)]
         [ProducesResponseType(typeof(ApiResult<string>), 400)]
         public async Task<ApiResult<CommandResultDto>> DeleteSite(string acronym)

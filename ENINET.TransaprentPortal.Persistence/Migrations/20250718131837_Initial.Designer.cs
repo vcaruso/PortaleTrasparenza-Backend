@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ENINET.TransparentPortal.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250717114517_Initial")]
+    [Migration("20250718131837_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -152,17 +152,17 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                         },
                         new
                         {
-                            Permission = "ADD_COMPLAINT_OPERATION",
+                            Permission = "ADD_COMPLAINT_STEP",
                             Description = "Add Complaint Operation"
                         },
                         new
                         {
-                            Permission = "DELETE_COMPLAINT_OPERATION",
+                            Permission = "DELETE_COMPLAINT_STEP",
                             Description = "Delete Complaint Operation"
                         },
                         new
                         {
-                            Permission = "UPDATE_COMPLAINT_OPERATION",
+                            Permission = "UPDATE_COMPLAINT_STEP",
                             Description = "Update Complaint Operation"
                         });
                 });
@@ -300,17 +300,17 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                         },
                         new
                         {
-                            Permission = "ADD_COMPLAINT_OPERATION",
+                            Permission = "ADD_COMPLAINT_STEP",
                             GroupName = "Administrators"
                         },
                         new
                         {
-                            Permission = "DELETE_COMPLAINT_OPERATION",
+                            Permission = "DELETE_COMPLAINT_STEP",
                             GroupName = "Administrators"
                         },
                         new
                         {
-                            Permission = "UPDATE_COMPLAINT_OPERATION",
+                            Permission = "UPDATE_COMPLAINT_STEP",
                             GroupName = "Administrators"
                         },
                         new
@@ -365,17 +365,17 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                         },
                         new
                         {
-                            Permission = "ADD_COMPLAINT_OPERATION",
+                            Permission = "ADD_COMPLAINT_STEP",
                             GroupName = "Contributors"
                         },
                         new
                         {
-                            Permission = "DELETE_COMPLAINT_OPERATION",
+                            Permission = "DELETE_COMPLAINT_STEP",
                             GroupName = "Contributors"
                         },
                         new
                         {
-                            Permission = "UPDATE_COMPLAINT_OPERATION",
+                            Permission = "UPDATE_COMPLAINT_STEP",
                             GroupName = "Contributors"
                         },
                         new
@@ -415,17 +415,17 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                         },
                         new
                         {
-                            Permission = "ADD_COMPLAINT_OPERATION",
+                            Permission = "ADD_COMPLAINT_STEP",
                             GroupName = "Viewers"
                         },
                         new
                         {
-                            Permission = "DELETE_COMPLAINT_OPERATION",
+                            Permission = "DELETE_COMPLAINT_STEP",
                             GroupName = "Viewers"
                         },
                         new
                         {
-                            Permission = "UPDATE_COMPLAINT_OPERATION",
+                            Permission = "UPDATE_COMPLAINT_STEP",
                             GroupName = "Viewers"
                         },
                         new
@@ -618,22 +618,22 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            OperationId = new Guid("42ed4b08-2989-4898-a817-01120d3496af"),
+                            OperationId = new Guid("08c7989f-5dff-47e0-902c-f7cee21f8a1f"),
                             OperationName = "OPENED"
                         },
                         new
                         {
-                            OperationId = new Guid("b5822dbf-9916-47a6-ba53-2b4472d8b562"),
+                            OperationId = new Guid("6475d53c-5e8b-4be3-9794-68e419917c68"),
                             OperationName = "SOLVED"
                         },
                         new
                         {
-                            OperationId = new Guid("94123088-171f-4561-a83f-3c9c5072ae93"),
+                            OperationId = new Guid("94b07ee9-20d4-4829-8acc-5b6ac8ddc227"),
                             OperationName = "CANCELED"
                         },
                         new
                         {
-                            OperationId = new Guid("b0e7125b-998c-492b-b6ea-afceb4a5d1d1"),
+                            OperationId = new Guid("a53c4d4e-2722-4a0d-913b-3d73295968ba"),
                             OperationName = "ACTION"
                         });
                 });

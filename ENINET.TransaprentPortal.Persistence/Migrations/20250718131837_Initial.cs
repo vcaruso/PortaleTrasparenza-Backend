@@ -301,18 +301,18 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                 columns: new[] { "Permission", "Description" },
                 values: new object[,]
                 {
-                    { "ADD_COMPLAINT_OPERATION", "Add Complaint Operation" },
+                    { "ADD_COMPLAINT_STEP", "Add Complaint Operation" },
                     { "ADD_ELEMENTS", "Add Elements" },
                     { "ADD_SITES", "Add Sites" },
                     { "ADD_USER", "Aggiunge un utente all'applicazione" },
                     { "APPLICATION_USERS_MANAGE", "Gestione utenti applicazione" },
-                    { "DELETE_COMPLAINT_OPERATION", "Delete Complaint Operation" },
+                    { "DELETE_COMPLAINT_STEP", "Delete Complaint Operation" },
                     { "DELETE_ELEMENTS", "Delete Elements" },
                     { "DELETE_REPORT", "Delete Report" },
                     { "DELETE_SITES", "Delete Sites" },
                     { "DELETE_USER", "Rimuove un utente all'applicazione" },
                     { "DOWNLOAD_REPORT", "Download Report" },
-                    { "UPDATE_COMPLAINT_OPERATION", "Update Complaint Operation" },
+                    { "UPDATE_COMPLAINT_STEP", "Update Complaint Operation" },
                     { "UPDATE_ELEMENTS", "Update Elements" },
                     { "UPDATE_SITES", "Update Sites" },
                     { "UPLOAD_REPORT", "Upload Report" },
@@ -332,10 +332,10 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                 columns: new[] { "OperationId", "OperationName" },
                 values: new object[,]
                 {
-                    { new Guid("42ed4b08-2989-4898-a817-01120d3496af"), "OPENED" },
-                    { new Guid("94123088-171f-4561-a83f-3c9c5072ae93"), "CANCELED" },
-                    { new Guid("b0e7125b-998c-492b-b6ea-afceb4a5d1d1"), "ACTION" },
-                    { new Guid("b5822dbf-9916-47a6-ba53-2b4472d8b562"), "SOLVED" }
+                    { new Guid("08c7989f-5dff-47e0-902c-f7cee21f8a1f"), "OPENED" },
+                    { new Guid("6475d53c-5e8b-4be3-9794-68e419917c68"), "SOLVED" },
+                    { new Guid("94b07ee9-20d4-4829-8acc-5b6ac8ddc227"), "CANCELED" },
+                    { new Guid("a53c4d4e-2722-4a0d-913b-3d73295968ba"), "ACTION" }
                 });
 
             migrationBuilder.InsertData(
@@ -366,17 +366,17 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                 columns: new[] { "GroupName", "Permission" },
                 values: new object[,]
                 {
-                    { "Administrators", "ADD_COMPLAINT_OPERATION" },
-                    { "Contributors", "ADD_COMPLAINT_OPERATION" },
-                    { "Viewers", "ADD_COMPLAINT_OPERATION" },
+                    { "Administrators", "ADD_COMPLAINT_STEP" },
+                    { "Contributors", "ADD_COMPLAINT_STEP" },
+                    { "Viewers", "ADD_COMPLAINT_STEP" },
                     { "Administrators", "ADD_ELEMENTS" },
                     { "Contributors", "ADD_ELEMENTS" },
                     { "Administrators", "ADD_SITES" },
                     { "Administrators", "ADD_USER" },
                     { "Administrators", "APPLICATION_USERS_MANAGE" },
-                    { "Administrators", "DELETE_COMPLAINT_OPERATION" },
-                    { "Contributors", "DELETE_COMPLAINT_OPERATION" },
-                    { "Viewers", "DELETE_COMPLAINT_OPERATION" },
+                    { "Administrators", "DELETE_COMPLAINT_STEP" },
+                    { "Contributors", "DELETE_COMPLAINT_STEP" },
+                    { "Viewers", "DELETE_COMPLAINT_STEP" },
                     { "Administrators", "DELETE_ELEMENTS" },
                     { "Contributors", "DELETE_ELEMENTS" },
                     { "Administrators", "DELETE_REPORT" },
@@ -387,9 +387,9 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                     { "Administrators", "DOWNLOAD_REPORT" },
                     { "Contributors", "DOWNLOAD_REPORT" },
                     { "Viewers", "DOWNLOAD_REPORT" },
-                    { "Administrators", "UPDATE_COMPLAINT_OPERATION" },
-                    { "Contributors", "UPDATE_COMPLAINT_OPERATION" },
-                    { "Viewers", "UPDATE_COMPLAINT_OPERATION" },
+                    { "Administrators", "UPDATE_COMPLAINT_STEP" },
+                    { "Contributors", "UPDATE_COMPLAINT_STEP" },
+                    { "Viewers", "UPDATE_COMPLAINT_STEP" },
                     { "Administrators", "UPDATE_ELEMENTS" },
                     { "Contributors", "UPDATE_ELEMENTS" },
                     { "Administrators", "UPDATE_SITES" },

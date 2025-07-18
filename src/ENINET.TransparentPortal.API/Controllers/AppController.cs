@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ENINET.TransaprentPortal.Persistence.Configuration;
 using ENINET.TransaprentPortal.Persistence.Entities;
 using ENINET.TransparentPortal.API.Configuration;
 using ENINET.TransparentPortal.API.Dtos;
@@ -33,6 +34,7 @@ public class AppController : ControllerBase
     }
 
     [HttpGet("reports/{site}/{element}/{year}/{pageNum}/{pageSize}/{orderby?}")]
+    [Authorize(Roles = nameof(ApplicationPermissionConfiguration.VIEW_REPORT))]
     public async Task<ApiResult<IList<ReportDto>>> GetReport(string site, string element, string year, int pageNum = 1, int pageSize = 15, string orderby = $"Element,Year,-Month,-Progressive")
     {
         var email = User.Claims.Where(t => t.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").FirstOrDefault();

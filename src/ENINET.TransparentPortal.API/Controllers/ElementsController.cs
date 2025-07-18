@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ENINET.TransaprentPortal.Persistence.Configuration;
 using ENINET.TransaprentPortal.Persistence.Entities;
 using ENINET.TransparentPortal.API.Dtos;
 using ENINET.TransparentPortal.API.Dtos.App;
@@ -31,7 +32,7 @@ namespace ENINET.TransparentPortal.API.Controllers
         /// <returns></returns>
         /// <exception cref="BadHttpRequestException"></exception>
         [HttpGet("list/{acronym}")]
-        [Authorize(Roles = "VIEW_ELEMENTS")]
+        [Authorize(Roles = nameof(ApplicationPermissionConfiguration.VIEW_ELEMENTS))]
         [ProducesResponseType(typeof(ApiResult<IList<ElementDto>>), 200)]
         [ProducesResponseType(typeof(ApiResult<string>), 400)]
         public async Task<ApiResult<IList<ElementDto>>> GetElements(string acronym)
@@ -54,7 +55,7 @@ namespace ENINET.TransparentPortal.API.Controllers
         /// <returns></returns>
         /// <exception cref="BadHttpRequestException"></exception>
         [HttpGet("list")]
-        [Authorize(Roles = "VIEW_ELEMENTS")]
+        [Authorize(Roles = nameof(ApplicationPermissionConfiguration.VIEW_ELEMENTS))]
         [ProducesResponseType(typeof(ApiResult<IList<ElementDto>>), 200)]
         [ProducesResponseType(typeof(ApiResult<string>), 400)]
         public async Task<ApiResult<IList<ElementDto>>> GetElements()
@@ -79,7 +80,7 @@ namespace ENINET.TransparentPortal.API.Controllers
         /// <returns></returns>
         /// <exception cref="BadHttpRequestException"></exception>
         [HttpPost("add")]
-        [Authorize(Roles = "ADD_ELEMENTS")]
+        [Authorize(Roles = nameof(ApplicationPermissionConfiguration.ADD_ELEMENTS))]
         [ProducesResponseType(typeof(ApiResult<ElementDto>), 200)]
         [ProducesResponseType(typeof(ApiResult<string>), 400)]
         public async Task<ApiResult<ElementDto>> AddElements(ElementDto elementName)
@@ -113,7 +114,7 @@ namespace ENINET.TransparentPortal.API.Controllers
         /// <returns></returns>
         /// <exception cref="BadHttpRequestException"></exception>
         [HttpPost("update/{acronym}/{element}")]
-        [Authorize(Roles = "UPDATE_ELEMENTS")]
+        [Authorize(Roles = nameof(ApplicationPermissionConfiguration.UPDATE_ELEMENTS))]
         [ProducesResponseType(typeof(ApiResult<ElementDto>), 200)]
         [ProducesResponseType(typeof(ApiResult<string>), 400)]
         public async Task<ApiResult<ElementDto>> EditElements(string acronym, string element, ElementDto elementDto)
@@ -145,7 +146,7 @@ namespace ENINET.TransparentPortal.API.Controllers
 
 
         [HttpDelete("delete/{elementName}")]
-        [Authorize(Roles = "DELETE_ELEMENTS")]
+        [Authorize(Roles = nameof(ApplicationPermissionConfiguration.DELETE_ELEMENTS))]
         [ProducesResponseType(typeof(ApiResult<ElementDto>), 200)]
         [ProducesResponseType(typeof(ApiResult<string>), 400)]
         public async Task<ApiResult<CommandResultDto>> DeleteElements(string elementName)
