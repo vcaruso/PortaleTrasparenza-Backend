@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ENINET.TransparentPortal.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250718131837_Initial")]
+    [Migration("20250721144007_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -510,8 +510,8 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                         {
                             Acronym = "RO",
                             Description = "Sito di Rovigo",
-                            Latitude = 0.0,
-                            Longitude = 0.0
+                            Latitude = 45.069660315020052,
+                            Longitude = 11.790947792917811
                         });
                 });
 
@@ -618,22 +618,22 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            OperationId = new Guid("08c7989f-5dff-47e0-902c-f7cee21f8a1f"),
+                            OperationId = new Guid("936421bd-fe91-4755-b419-38a9ad74c710"),
                             OperationName = "OPENED"
                         },
                         new
                         {
-                            OperationId = new Guid("6475d53c-5e8b-4be3-9794-68e419917c68"),
+                            OperationId = new Guid("a1d64228-4d26-4e59-8564-8dde201e2faa"),
                             OperationName = "SOLVED"
                         },
                         new
                         {
-                            OperationId = new Guid("94b07ee9-20d4-4829-8acc-5b6ac8ddc227"),
+                            OperationId = new Guid("045cb323-05d8-4299-a767-d9f47b54f4f6"),
                             OperationName = "CANCELED"
                         },
                         new
                         {
-                            OperationId = new Guid("a53c4d4e-2722-4a0d-913b-3d73295968ba"),
+                            OperationId = new Guid("f7ddafa3-bf59-4762-8139-4f907d93745d"),
                             OperationName = "ACTION"
                         });
                 });

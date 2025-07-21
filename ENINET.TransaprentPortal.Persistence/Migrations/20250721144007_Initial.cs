@@ -332,10 +332,10 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                 columns: new[] { "OperationId", "OperationName" },
                 values: new object[,]
                 {
-                    { new Guid("08c7989f-5dff-47e0-902c-f7cee21f8a1f"), "OPENED" },
-                    { new Guid("6475d53c-5e8b-4be3-9794-68e419917c68"), "SOLVED" },
-                    { new Guid("94b07ee9-20d4-4829-8acc-5b6ac8ddc227"), "CANCELED" },
-                    { new Guid("a53c4d4e-2722-4a0d-913b-3d73295968ba"), "ACTION" }
+                    { new Guid("045cb323-05d8-4299-a767-d9f47b54f4f6"), "CANCELED" },
+                    { new Guid("936421bd-fe91-4755-b419-38a9ad74c710"), "OPENED" },
+                    { new Guid("a1d64228-4d26-4e59-8564-8dde201e2faa"), "SOLVED" },
+                    { new Guid("f7ddafa3-bf59-4762-8139-4f907d93745d"), "ACTION" }
                 });
 
             migrationBuilder.InsertData(
@@ -350,7 +350,7 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
             migrationBuilder.InsertData(
                 table: "Sites",
                 columns: new[] { "Acronym", "Description", "Latitude", "Longitude" },
-                values: new object[] { "RO", "Sito di Rovigo", 0.0, 0.0 });
+                values: new object[] { "RO", "Sito di Rovigo", 45.069660315020052, 11.790947792917811 });
 
             migrationBuilder.InsertData(
                 table: "ElementsSite",

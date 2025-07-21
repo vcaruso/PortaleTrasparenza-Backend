@@ -8,8 +8,9 @@
 
 
         public DateTime CreationDate { get; set; }
-        public DateTime OpenedDate { get; set; }
-        public DateTime CancelledDate { get; set; }
-        public DateTime ResolutionDate { get; set; }
+        public DateTime? OpenedDate { get; set; }
+        public DateTime? CancelledDate { get; set; }
+        public DateTime? ResolutionDate { get; set; }
+        public string Text { get; set; } = default!;
     }
 }
