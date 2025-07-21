@@ -14,7 +14,7 @@ namespace ENINET.TransaprentPortal.Persistence.Configuration
             builder.HasData
             (
 
-                new Site { Acronym = AcronimoRovigo, Description = NomeRovigo }
+                new Site { Acronym = AcronimoRovigo, Description = NomeRovigo, Latitude = 45.06966031502005, Longitude = 11.79094779291781 }
 
 
             );
