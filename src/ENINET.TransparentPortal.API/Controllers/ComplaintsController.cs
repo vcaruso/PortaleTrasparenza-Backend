@@ -140,14 +140,16 @@ namespace ENINET.TransparentPortal.API.Controllers
         }
 
         [HttpPost("addStep")]
-        [Authorize(Roles = nameof(ApplicationPermissionConfiguration.VIEW_COMPLAINT_STEP))]
+        [Authorize(Roles = nameof(ApplicationPermissionConfiguration.ADD_COMPLAINT_STEP))]
         public async Task<ApiResult<Guid>> AddStep([FromBody] AddComplaintStepDto stepDto)
         {
 
             var email = User.Claims.Where(t => t.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").FirstOrDefault();
             var authorizedSites = User.Claims.Where(t => t.Type == "TransparentSites").Select(s => s.Value).ToArray();
             var step = _mapper.Map<ComplaintStep>(stepDto);
-            var compliant = await _repository.Compliant.FindByCondition(null, c => c.ComplaintId == stepDto.ComplaintId, false).FirstOrDefaultAsync();
+            step.StepDate = DateTime.UtcNow;
+            step.Operator = email.Value;
+            var compliant = await _repository.Compliant.FindByCondition(null, c => c.ComplaintId == stepDto.ComplaintId, true).FirstOrDefaultAsync();
             var operation = await _repository.CompliantOperation.FindByCondition(null, c => c.OperationId == stepDto.OperationId, false).FirstOrDefaultAsync();
             if (compliant == null)
             {
@@ -189,16 +191,73 @@ namespace ENINET.TransparentPortal.API.Controllers
             }
             if (operation.OperationName == ComplaintOperationConfiguration.Canceled)
             {
-                compliant.CancelledDate = DateTime.Now;
+                compliant.CancelledDate = DateTime.UtcNow;
             }
             if (operation.OperationName == ComplaintOperationConfiguration.Opened)
             {
-                compliant.OpenedDate = DateTime.Now;
+                compliant.OpenedDate = DateTime.UtcNow;
             }
             _repository.Save();
 
             return await Task.FromResult(new ApiResult<Guid> { Data = step.ResolutionId, Message = "Ok", StatusCode = StatusCodes.Status201Created });
         }
 
+        [HttpGet("listavailableoperation/{complaint}")]
+        [Authorize(Roles = nameof(ApplicationPermissionConfiguration.ADD_COMPLAINT_STEP))]
+        public async Task<ApiResult<IList<ComplaintOperationDto>>> GetComplaintAvailableOperation(Guid complaint)
+        {
+            var complaintStep = await _repository.CompliantStep.FindByCondition(null, c => c.ComplaintId == complaint, false).ToListAsync();
+            var operations = _repository.CompliantOperation.FindAll(false);
+            var availableOperation = new List<ComplaintOperation>();
+
+            if (!complaintStep.Any(o => o.OperationText == ComplaintOperationConfiguration.Canceled))
+            {
+                if (complaintStep.Count == 0) // Solo l'apertura è possibile
+                {
+                    var result = operations.Where(p => p.OperationName == ComplaintOperationConfiguration.Opened).FirstOrDefault();
+                    if (result != null)
+                    {
+                        availableOperation.Add(result);
+                    }
+                }
+                else
+                {
+
+                    if (!complaintStep.Any(o => o.OperationText == ComplaintOperationConfiguration.Canceled))
+                    {
+                        if (!complaintStep.Any(o => o.OperationText == ComplaintOperationConfiguration.Solved))
+                        {
+                            if (complaintStep.Any(o => o.OperationText == ComplaintOperationConfiguration.Opened))
+                            {
+                                var result = operations.Where(p => p.OperationName == ComplaintOperationConfiguration.Action || p.OperationName == ComplaintOperationConfiguration.Solved || p.OperationName == ComplaintOperationConfiguration.Canceled);
+
+                                availableOperation.AddRange(result);
+
+                            }
+                        }
+                    }
+                }
+            }
+            var retVal = _mapper.Map<IList<ComplaintOperationDto>>(availableOperation);
+            return new ApiResult<IList<ComplaintOperationDto>> { Data = retVal, Message = "Ok", StatusCode = StatusCodes.Status200OK };
+        }
+
+        [HttpGet("listoperations/{complaint}")]
+        [Authorize(Roles = nameof(ApplicationPermissionConfiguration.ADD_COMPLAINT_STEP))]
+        public async Task<ApiResult<IList<OperationStepDto>>> GetComplaintOperation(Guid complaint)
+        {
+            var email = User.Claims.Where(t => t.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").FirstOrDefault();
+            var authorizedSites = User.Claims.Where(t => t.Type == "TransparentSites").Select(s => s.Value).ToArray();
+            if (authorizedSites.Length > 0)
+            {
+                var result = await _repository.CompliantStep
+                    .FindByCondition(null, c => c.ComplaintId == complaint && authorizedSites.Contains(c.Complaint.Acronym), false)
+                    .Select(s => new OperationStepDto { Operation = s.Operation.OperationName, OperationText = s.OperationText, Operator = s.Operator, StepDate = s.StepDate }).ToListAsync();
+
+                return new ApiResult<IList<OperationStepDto>> { Data = result, Message = "Ok", StatusCode = StatusCodes.Status200OK };
+            }
+            throw new UnauthorizedAccessException();
+
+        }
     }
 }

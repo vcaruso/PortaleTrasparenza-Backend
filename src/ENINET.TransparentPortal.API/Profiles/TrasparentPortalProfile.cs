@@ -19,6 +19,7 @@ public class TrasparentPortalProfile : Profile
         CreateMap<AddComplaintDto, Complaint>().ReverseMap();
         CreateMap<GuestAuthRequestDto, GuestAuth>().ReverseMap();
         CreateMap<ComplaintDto, Complaint>().ReverseMap();
+        CreateMap<ComplaintOperationDto, ComplaintOperation>().ReverseMap();
 
     }
 }

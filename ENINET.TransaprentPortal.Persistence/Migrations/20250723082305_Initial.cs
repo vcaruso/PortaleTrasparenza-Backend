@@ -332,10 +332,10 @@ namespace ENINET.TransparentPortal.Persistence.Migrations
                 columns: new[] { "OperationId", "OperationName" },
                 values: new object[,]
                 {
-                    { new Guid("045cb323-05d8-4299-a767-d9f47b54f4f6"), "CANCELED" },
-                    { new Guid("936421bd-fe91-4755-b419-38a9ad74c710"), "OPENED" },
-                    { new Guid("a1d64228-4d26-4e59-8564-8dde201e2faa"), "SOLVED" },
-                    { new Guid("f7ddafa3-bf59-4762-8139-4f907d93745d"), "ACTION" }
+                    { new Guid("0cba4bb0-d2fd-487c-8a14-6705a2ba5d1b"), "OPENED" },
+                    { new Guid("97afc8a1-fae8-44ad-91c0-944874df8ecd"), "SOLVED" },
+                    { new Guid("a1046896-6277-49c4-95d7-cd381fa09dc4"), "ACTION" },
+                    { new Guid("abe46afb-f776-4e83-b51a-f2c95fc45526"), "CANCELED" }
                 });
 
             migrationBuilder.InsertData(
