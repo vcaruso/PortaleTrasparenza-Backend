@@ -23,7 +23,7 @@ public class ApplicationPermissionConfiguration : IEntityTypeConfiguration<Appli
     public static readonly string ADD_SITES = "ADD_SITES";
 
     public static readonly string VIEW_COMPLAINT = "VIEW_COMPLAINT";
-    public static readonly string VIEW_COMPLAINT_STEP = "ADD_COMPLAINT_STEP";
+    public static readonly string ADD_COMPLAINT_STEP = "ADD_COMPLAINT_STEP";
     public static readonly string DELETE_COMPLAINT_STEP = "DELETE_COMPLAINT_STEP";
     public static readonly string UPDATE_COMPLAINT_STEP = "UPDATE_COMPLAINT_STEP";
     public void Configure(EntityTypeBuilder<ApplicationPermission> builder)
@@ -49,7 +49,7 @@ public class ApplicationPermissionConfiguration : IEntityTypeConfiguration<Appli
            new ApplicationPermission { Permission = UPDATE_SITES, Description = "Update Sites" },
 
            new ApplicationPermission { Permission = VIEW_COMPLAINT, Description = "View Complaint" },
-           new ApplicationPermission { Permission = VIEW_COMPLAINT_STEP, Description = "Add Complaint Operation" },
+           new ApplicationPermission { Permission = ADD_COMPLAINT_STEP, Description = "Add Complaint Operation" },
            new ApplicationPermission { Permission = DELETE_COMPLAINT_STEP, Description = "Delete Complaint Operation" },
            new ApplicationPermission { Permission = UPDATE_COMPLAINT_STEP, Description = "Update Complaint Operation" }
 

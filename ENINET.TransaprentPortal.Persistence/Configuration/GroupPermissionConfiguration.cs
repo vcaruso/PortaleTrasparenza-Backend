@@ -29,7 +29,7 @@ namespace ENINET.TransaprentPortal.Persistence.Configuration
                 new GroupPermission { GroupName = ApplicationGroupConfiguration.Administrators, Permission = ApplicationPermissionConfiguration.ADD_SITES },
                 new GroupPermission { GroupName = ApplicationGroupConfiguration.Administrators, Permission = ApplicationPermissionConfiguration.DELETE_SITES },
 
-                new GroupPermission { GroupName = ApplicationGroupConfiguration.Administrators, Permission = ApplicationPermissionConfiguration.VIEW_COMPLAINT_STEP },
+                new GroupPermission { GroupName = ApplicationGroupConfiguration.Administrators, Permission = ApplicationPermissionConfiguration.ADD_COMPLAINT_STEP },
                 new GroupPermission { GroupName = ApplicationGroupConfiguration.Administrators, Permission = ApplicationPermissionConfiguration.DELETE_COMPLAINT_STEP },
                 new GroupPermission { GroupName = ApplicationGroupConfiguration.Administrators, Permission = ApplicationPermissionConfiguration.UPDATE_COMPLAINT_STEP },
                 new GroupPermission { GroupName = ApplicationGroupConfiguration.Administrators, Permission = ApplicationPermissionConfiguration.VIEW_COMPLAINT },
@@ -47,7 +47,7 @@ namespace ENINET.TransaprentPortal.Persistence.Configuration
                 new GroupPermission { GroupName = ApplicationGroupConfiguration.Contributors, Permission = ApplicationPermissionConfiguration.ADD_ELEMENTS },
                 new GroupPermission { GroupName = ApplicationGroupConfiguration.Contributors, Permission = ApplicationPermissionConfiguration.DELETE_ELEMENTS },
                 new GroupPermission { GroupName = ApplicationGroupConfiguration.Contributors, Permission = ApplicationPermissionConfiguration.VIEW_SITES },
-                new GroupPermission { GroupName = ApplicationGroupConfiguration.Contributors, Permission = ApplicationPermissionConfiguration.VIEW_COMPLAINT_STEP },
+                new GroupPermission { GroupName = ApplicationGroupConfiguration.Contributors, Permission = ApplicationPermissionConfiguration.ADD_COMPLAINT_STEP },
                 new GroupPermission { GroupName = ApplicationGroupConfiguration.Contributors, Permission = ApplicationPermissionConfiguration.DELETE_COMPLAINT_STEP },
                 new GroupPermission { GroupName = ApplicationGroupConfiguration.Contributors, Permission = ApplicationPermissionConfiguration.UPDATE_COMPLAINT_STEP },
                 new GroupPermission { GroupName = ApplicationGroupConfiguration.Contributors, Permission = ApplicationPermissionConfiguration.VIEW_COMPLAINT },
@@ -59,7 +59,7 @@ namespace ENINET.TransaprentPortal.Persistence.Configuration
                 new GroupPermission { GroupName = ApplicationGroupConfiguration.Viewers, Permission = ApplicationPermissionConfiguration.DOWNLOAD_REPORT },
                 new GroupPermission { GroupName = ApplicationGroupConfiguration.Viewers, Permission = ApplicationPermissionConfiguration.VIEW_ELEMENTS },
                 new GroupPermission { GroupName = ApplicationGroupConfiguration.Viewers, Permission = ApplicationPermissionConfiguration.VIEW_SITES },
-                new GroupPermission { GroupName = ApplicationGroupConfiguration.Viewers, Permission = ApplicationPermissionConfiguration.VIEW_COMPLAINT_STEP },
+                new GroupPermission { GroupName = ApplicationGroupConfiguration.Viewers, Permission = ApplicationPermissionConfiguration.ADD_COMPLAINT_STEP },
                 new GroupPermission { GroupName = ApplicationGroupConfiguration.Viewers, Permission = ApplicationPermissionConfiguration.DELETE_COMPLAINT_STEP },
                 new GroupPermission { GroupName = ApplicationGroupConfiguration.Viewers, Permission = ApplicationPermissionConfiguration.UPDATE_COMPLAINT_STEP },
                 new GroupPermission { GroupName = ApplicationGroupConfiguration.Viewers, Permission = ApplicationPermissionConfiguration.VIEW_COMPLAINT }
