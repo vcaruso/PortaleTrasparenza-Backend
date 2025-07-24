@@ -252,12 +252,46 @@ namespace ENINET.TransparentPortal.API.Controllers
             {
                 var result = await _repository.CompliantStep
                     .FindByCondition(null, c => c.ComplaintId == complaint && authorizedSites.Contains(c.Complaint.Acronym), false)
-                    .Select(s => new OperationStepDto { Operation = s.Operation.OperationName, OperationText = s.OperationText, Operator = s.Operator, StepDate = s.StepDate }).ToListAsync();
+                    .Select(s => new OperationStepDto { Operation = s.Operation.OperationName, OperationText = s.OperationText, Operator = s.Operator, StepDate = s.StepDate, StepId = s.ResolutionId }).ToListAsync();
 
                 return new ApiResult<IList<OperationStepDto>> { Data = result, Message = "Ok", StatusCode = StatusCodes.Status200OK };
             }
             throw new UnauthorizedAccessException();
 
         }
+
+        [HttpDelete("deletestep/{complaintid}/{stepid}")]
+        [Authorize(Roles = nameof(ApplicationPermissionConfiguration.DELETE_COMPLAINT_STEP))]
+        public async Task<ApiResult<CommandResultDto>> DeleteStep(Guid complaintid, Guid stepid)
+        {
+            var email = User.Claims.Where(t => t.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").FirstOrDefault();
+            var authorizedSites = User.Claims.Where(t => t.Type == "TransparentSites").Select(s => s.Value).ToArray();
+            var step = await _repository.CompliantStep
+                  .FindByCondition(i => i.Complaint, c => c.ComplaintId == complaintid && authorizedSites
+                  .Contains(c.Complaint.Acronym), true)
+                  .OrderByDescending(o => o.StepDate)
+                  .FirstOrDefaultAsync();
+            if (step != null)
+            {
+                _repository.CompliantStep.Delete(step);
+                if (step.OperationText == ComplaintOperationConfiguration.Opened)
+                {
+                    step.Complaint.OpenedDate = null;
+                }
+                if (step.OperationText == ComplaintOperationConfiguration.Canceled)
+                {
+                    step.Complaint.CancelledDate = null;
+                }
+                if (step.OperationText == ComplaintOperationConfiguration.Solved)
+                {
+                    step.Complaint.ResolutionDate = null;
+                }
+                _repository.Save();
+                return new ApiResult<CommandResultDto> { Data = new CommandResultDto("Delete", "OK"), Message = "OK", StatusCode = StatusCodes.Status200OK };
+
+            }
+            throw new BadHttpRequestException($"Step non authorized to delete!");
+        }
+
     }
 }
