@@ -61,6 +61,37 @@ namespace ENINET.TransparentPortal.API.Controllers
 
         }
 
+        [HttpGet("listunopened/{site}")]
+        [Authorize(Roles = nameof(ApplicationPermissionConfiguration.VIEW_COMPLAINT))]
+        public async Task<ApiResult<IList<ComplaintDto>>> GetComplaintUnopened(string site)
+        {
+            var email = User.Claims.Where(t => t.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").FirstOrDefault();
+            var authorizedSites = User.Claims.Where(t => t.Type == "TransparentSites").Select(s => s.Value).ToArray();
+
+            int totalItems = 0;
+            if (authorizedSites.Length > 0)
+            {
+
+                var items = await _repository.Compliant.FindByCondition(null, c => authorizedSites.Contains(c.Site.Acronym) && c.OpenedDate == null && c.Acronym == site, false)
+                    .OrderBy(o => o.CreationDate)
+                    .ToListAsync();
+
+
+                return new ApiResult<IList<ComplaintDto>>
+                {
+                    Data = _mapper.Map<List<ComplaintDto>>(items),
+                    Message = "Ok",
+                    StatusCode = StatusCodes.Status200OK,
+                    PageInfo = null
+                };
+
+            }
+            throw new UnauthorizedAccessException();
+
+        }
+
+
+
 
         [HttpPost("sendauthorization")]
         public Task<ApiResult<CommandResultDto>> GenerateAuthCode([FromBody] GuestAuthRequestDto request)
